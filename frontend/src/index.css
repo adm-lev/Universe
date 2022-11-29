@@ -64,6 +64,11 @@ ul, nav {
   padding: 0 15px;  
 }
 
+.menu-selected {
+  background-color: rgba(42, 214, 197, 0.735);
+  border-bottom: none;
+}
+
 a {
   text-decoration: none;
 }
@@ -73,7 +78,7 @@ a {
 }
 
 .menu {
-  background-color: antiquewhite;
+  background-color: beige;
   padding: 0;
 }
 
@@ -90,6 +95,11 @@ a {
 }
 
 .greetings {
+  width: 150px;
+  margin: 40px;
+  padding: 20px;
+  border: 2px solid black;
+  border-radius: 15px;
   background-color: beige;
   font-size: large;
 }

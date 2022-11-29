@@ -5,18 +5,19 @@ import UserList from './components/User';
 // import MenuBlock from './components/Menu';
 import FooterBlock from './components/Footer';
 import axios from 'axios';
-import ProjectList from './components/Projects';
-import NoteList from './components/Notes';
+// import ProjectList from './components/Projects';
+// import NoteList from './components/Notes';
 // import tabSwitch from './tunning';
 import {BrowserRouter, Route, Routes, Link, Navigate} from 'react-router-dom'
 import NotFound404 from './components/NotFound404';
 import ProjectUser from './components/Userprojects';
-import ProjectDetail from './components/ProjectDetail';
+// import ProjectDetail from './components/ProjectDetail';
 import LoginForm from './components/Auth';
 import Cookies from 'universal-cookie';
-import UserForm from './components/UserForm';
+// import UserForm from './components/UserForm';
 import banners from './components/banners';
 import GreetingsBlock from './components/Greetings';
+// import MainPage from './components/MainPage';
 
 class App extends React.Component {
   constructor (props){
@@ -70,7 +71,7 @@ class App extends React.Component {
         .catch(error => console.log(error))
   }
 
-
+// -----------------------CRUD DATA ----------------------------------------
 // ********************Authentication*************************************
 
   logout () {
@@ -85,9 +86,9 @@ class App extends React.Component {
   }
 
   isAuth () {
-    // console.log(`access token contents: ${this.state.accessToken}`);
-    console.log(`isAuth token contents: ${this.state.token}`);
-    console.log(`isAuth is: ${!!this.state.token}`)
+                              // console.log(`access token contents: ${this.state.accessToken}`);
+                              // console.log(`isAuth token contents: ${this.state.token}`);
+                              // console.log(`isAuth is: ${!!this.state.token}`)
     // return !!this.state.accessToken;    
     
     return !!this.state.token;
@@ -116,9 +117,9 @@ class App extends React.Component {
     const token = cookies.get('token');    
     // if (token['access']) {
     // if (token) {
-      console.log(`boolean token: ${!!token}`);
-      console.log('token:' + token);
-      console.log('is Auth in tokenstorage ' + this.isAuth());
+                    // console.log(`boolean token: ${!!token}`);
+                    // console.log('token:' + token);
+                    // console.log('is Auth in tokenstorage ' + this.isAuth());
       this.setState({
         // 'accessToken': token['access'],
         // 'accessToken': token,
@@ -130,7 +131,7 @@ class App extends React.Component {
     // } else {
     //   this.loadData();
     // }
-    console.log(`user is: ${user}`);
+                  // console.log(`user is: ${user}`);
   }
 
   getToken (username,password) {
@@ -139,8 +140,8 @@ class App extends React.Component {
     // axios.post(baseUrl+'/token/', data).then(response => {
     axios.post(baseUrl+'-token-auth/', data).then(response => { 
       // this.setToken(response.data['token']);   
-      console.log(`saving token: ${response.data['token']}`)
-      console.log(`saving name: ${username}`)
+                   // console.log(`saving token: ${response.data['token']}`)
+                   // console.log(`saving name: ${username}`)
       this.setToken(response.data['token'], username);   
       // this.setState({
       //   'loggedAs': username
@@ -174,27 +175,44 @@ class App extends React.Component {
       'aboutMe': greetings,
     });
 
-    axios.get(baseUrl+'/users/',{headers}).then(response => {
-      this.setState({
-        'users': response.data,        
-      });
+    // axios.get(baseUrl+'/users/',{headers}).then(response => {
+    //   this.setState({
+    //     'users': response.data,        
+    //   });
            
-    }).catch(error => console.log(error));    
+    // }).catch(error => console.log(error));    
    
-    axios.get(baseUrl+'/projects/', {headers}).then(response => {
-      this.setState({
-        'projects': response.data,        
-      });
-    }).catch(error => console.log(error));
+    // axios.get(baseUrl+'/projects/', {headers}).then(response => {
+    //   this.setState({
+    //     'projects': response.data,        
+    //   });
+    // }).catch(error => console.log(error));
 
-    axios.get(baseUrl+'/todos/', {headers}).then(response => {
-      this.setState({
-        'notes': response.data,        
-      });
-    }).catch(error => console.log(error));
+    // axios.get(baseUrl+'/todos/', {headers}).then(response => {
+    //   this.setState({
+    //     'notes': response.data,        
+    //   });
+    // }).catch(error => console.log(error));
   };
   
-// *******************************************************************
+// ******************************Authentication*************************************
+// *******************************ELEMENTS DECORATING*************************************
+  selectedMenu (event) {
+    
+    const element = event.target;
+    if (element.tagName === 'A') {
+      // console.log(element.parentNode);
+      const parentEl = element.parentNode;
+      const grabdPa = parentEl.parentNode; 
+      for (const child of grabdPa.children) {
+        child.classList.remove('menu-selected');
+      }
+      parentEl.classList.add('menu-selected')
+    }
+    
+  }
+// *******************************ELEMENTS DECORATING*************************************
+// *********************************RENDER*******************************************
   componentDidMount() {   
     this.getTokenStorage();
   }
@@ -204,16 +222,19 @@ class App extends React.Component {
       <div>        
         <BrowserRouter>
         <div className="menu container">
-          <nav className='navigation'>
-            <li className="menu-item">
-              <Link to="/">Users</Link>
+          <nav onClick={(event) => this.selectedMenu(event)} className='navigation'>
+            <li className="menu-selected menu-item">
+              <Link to="/">Main</Link>
             </li>
-            <li className="menu-item">
+            {/* <li className="menu-item">
               <Link to="/projects">Projects</Link>
             </li>
             <li className="menu-item">
               <Link to="/todos">Notes</Link>
-            </li>  
+            </li>   */}
+            <li className="menu-item">
+              <Link to="/todos">Game</Link>
+            </li> 
             <li className="menu-item">
               {this.isAuth() ? <button onClick={() => this.logout()}>
                               {`Logout as ${this.state.loggedAs}`}
@@ -222,26 +243,30 @@ class App extends React.Component {
           </nav>
         </div>
           <Routes>
-            <Route exact path="/" element={<Navigate to="/users"/>}/>
+            <Route exact path="/" element={<Navigate to="/main"/>}/>
             <Route exact path="/login" element={<LoginForm getToken={(username, password) => 
               this.getToken(username, password)}/>}/>
-            <Route exact path="/users/create" element={<UserForm 
+            {/* <Route exact path="/users/create" element={<UserForm 
               createUser={(userName, firstName, lastname, email) => 
-              this.createUser(userName, firstName, lastname, email)}/>}/>
-            <Route exact path="/users">
+              this.createUser(userName, firstName, lastname, email)}/>}/> */}
+            {/* <Route exact path="/users">
               <Route index element={<UserList  users={this.state.users} 
                                               deleteUser={id => this.deleteUser(id)}/>}/>
               <Route path=":userId" element={<ProjectUser projects={this.state.projects}/>}/>
-            </Route>        
-            <Route exact path="/projects">
+            </Route>   */}
+            <Route exact path="/main">
+              <Route index element={<GreetingsBlock greetings={this.state.aboutMe}/>}/>
+              {/* <Route path=":userId" element={<ProjectUser projects={this.state.projects}/>}/> */}
+            </Route>      
+            {/* <Route exact path="/projects">
               <Route index element={<ProjectList projects={this.state.projects}/>}/>
               <Route path=":projectId" element={<ProjectDetail projects={this.state.projects}/>}/>
-            </Route>         
-            <Route exact path="/todos" element={<NoteList notes={this.state.notes}/>}/>
+            </Route>          */}
+            {/* <Route exact path="/todos" element={<NoteList notes={this.state.notes}/>}/> */}
             <Route path="*" element={<NotFound404/>}/>            
           </Routes>
         </BrowserRouter>                
-        <GreetingsBlock greetings={this.state.aboutMe}/>
+        {/* <GreetingsBlock greetings={this.state.aboutMe}/> */}
         <FooterBlock footer={this.state.footer}/>
       </div>       
       )
