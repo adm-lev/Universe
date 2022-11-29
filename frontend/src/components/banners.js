@@ -1,4 +1,3 @@
-'use strict';
 
 const banners = {
     aboutMe: 'Hello! My name is Eugene Lavrenko and this project is  my version of a website dedicated to web development, popular trends in the IT world, and all sorts of cool things!',

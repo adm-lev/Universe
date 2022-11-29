@@ -1,14 +1,13 @@
-'use strict';
 // import logo from './logo.svg';
 import './App.css';
 import React from 'react';
 import UserList from './components/User';
-import MenuBlock from './components/Menu';
+// import MenuBlock from './components/Menu';
 import FooterBlock from './components/Footer';
 import axios from 'axios';
 import ProjectList from './components/Projects';
 import NoteList from './components/Notes';
-import tabSwitch from './tunning';
+// import tabSwitch from './tunning';
 import {BrowserRouter, Route, Routes, Link, Navigate} from 'react-router-dom'
 import NotFound404 from './components/NotFound404';
 import ProjectUser from './components/Userprojects';
@@ -203,7 +202,7 @@ class App extends React.Component {
   render() {
     return (        
       <div>        
-        {/* <BrowserRouter>
+        <BrowserRouter>
         <div className="menu container">
           <nav className='navigation'>
             <li className="menu-item">
@@ -241,7 +240,7 @@ class App extends React.Component {
             <Route exact path="/todos" element={<NoteList notes={this.state.notes}/>}/>
             <Route path="*" element={<NotFound404/>}/>            
           </Routes>
-        </BrowserRouter>                 */}
+        </BrowserRouter>                
         <GreetingsBlock greetings={this.state.aboutMe}/>
         <FooterBlock footer={this.state.footer}/>
       </div>       

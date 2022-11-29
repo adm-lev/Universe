@@ -29,7 +29,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = Secret_Key
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = not True
+DEBUG = True
 
 
 LOG_FILE = BASE_DIR / 'var' / 'log' / 'main_log.log'
@@ -151,6 +151,16 @@ else:
         }
 } 
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'universe',
+#         'USER': 'webadmin',
+#         'PASSWORD': DB_PASS,
+#         'HOST': 'db',
+#         'PORT': '5432',
+#         }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
