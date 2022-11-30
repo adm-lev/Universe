@@ -5,4 +5,8 @@ from django.core.management import BaseCommand
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        User.objects.create_superuser('devlev', 'rheingoldgalaxy@gmail.com', 'Gfctrf-12')
+
+        try:        
+                User.objects.create_superuser('devlev', 'rheingoldgalaxy@gmail.com', 'Gfctrf-12')
+        except Exception as err:
+            print(err)

@@ -1,80 +1,109 @@
-# from django.shortcuts import render
-# from django.shortcuts import render
-# from django.views import generic
-# from django.core.files.storage import FileSystemStorage
-# import os
-# import cv2
-# import pytesseract
-# from pdf2image import convert_from_path
-# import fitz
-# import docx
-# from django.conf import settings
-# from django.contrib.auth.decorators import login_required
-
-
-# MEDIA = r'/home/devlev/portfolio/universe/media'
-
-
-
-# def index(request):
-#     """
-#     :param request:
-#     :return:
-#     """
-
-#     return render(request, 'file_converter/index.html')
+from django.shortcuts import render
+from rest_framework.viewsets import ModelViewSet, GenericViewSet
+from .models import Player, Cell, Ship, Board, Game
+from .serializers import PlayerModelSerialazer, CellModelSerialazer, ShipModelSerialazer
+from .serializers import BoardModelSerialazer, GameModelSerialazer
+# from .filters import  
+from rest_framework import mixins
+from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.decorators import action
+from django.shortcuts import get_object_or_404
+from rest_framework.response import Response
+from rest_framework.permissions import BasePermission, DjangoModelPermissions, IsAdminUser 
+from rest_framework.permissions import IsAuthenticated, AllowAny, DjangoModelPermissionsOrAnonReadOnly
+# from universe.settings import SECRET_KEY
+# import logging
+from rest_framework.decorators import permission_classes
 
 
 
-# def load_files(request):
-#     if request.method == 'POST' and request.FILES:
-#         file = request.FILES['my_file1']
-#         fs = FileSystemStorage()
-#         filename = fs.save(os.path.join('converter', 'files', file.name), file)
-#         file_url = fs.url(filename)
-#         name = file.name
-#         extention = file.name.split('.')
-#         allow_image_list = ['bmp', 'dib', 'jpeg', 'jpg', 'jpe', 'jp2', 'png',
-#                             'pbm', 'pgm', 'sr', 'ras', 'tiff', 'tif']
-#         res_text = ''
-#         doc_url = ''
-#         message = ''
+class PlayerCustomViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
+    queryset = Player.objects.all()
+    serializer_class = PlayerModelSerialazer
+    permission_classes = [IsAuthenticated]
 
-#         if extention[1].lower() == 'pdf':
-#             file = fitz.open(os.path.join(settings.MEDIA_ROOT, 'converter/files/', name))
+    # def destroy():
+    #     pass
 
-#             doc = docx.Document()
+    # def create():
+    #     pass
 
-#             for pageNum, page in enumerate(file.pages(), start=1):
-#                 text = page.get_text()
-#                 doc.add_paragraph(text)
-#                 doc.save(os.path.join(settings.MEDIA_ROOT, 'converter/files/', extention[0] + '.docx'))
-#                 # if pageNum == 1:
-#                 #     break
-#             file_url = ''
-#             doc_url = '/media/converter/files/' + extention[0] + '.docx'
+    # def update():
+    #     pass
 
-#         elif extention[1].lower() in allow_image_list:
 
-#             img = cv2.imread(os.path.join(settings.MEDIA_ROOT, 'converter/files/', name))
-#             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+class CellCustomViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
+    queryset = Cell.objects.all()
+    serializer_class = CellModelSerialazer
+    permission_classes = [IsAuthenticated]
 
-#             res_text = pytesseract.image_to_string(img)
+    # def destroy():
+    #     pass
 
-#         else:
-#             file_url = ''
-#             message = 'Неподходящий формат файла :-('
+    # def create():
+    #     pass
 
-#         return render(
-#             request,
-#             'file_converter/load_file.html',
-#             {
-#                 'file_url': file_url,
-#                 'file_name': file.name,
-#                 'doc_url': doc_url,
-#                 'res_text': res_text,
-#                 'message': message,
-#             }
+    def update():
+        pass
 
-#         )
-#     return render(request, 'file_converter/load_file.html')
+
+class ShipCustomViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
+    queryset = Ship.objects.all()
+    serializer_class = ShipModelSerialazer
+    permission_classes = [IsAuthenticated]
+
+    # def destroy():
+    #     pass
+
+    # def create():
+    #     pass
+
+    # def update():
+    #     pass
+
+
+class BoardCustomViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
+    queryset = Board.objects.all()
+    serializer_class = BoardModelSerialazer
+    permission_classes = [IsAuthenticated]
+
+    # def destroy():
+    #     pass
+
+    # def create():
+    #     pass
+
+    # def update():
+    #     pass
+
+
+class GameCustomViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
+    queryset = Game.objects.all()
+    serializer_class = GameModelSerialazer
+    permission_classes = [IsAuthenticated]
+
+    # def destroy():
+    #     pass
+
+    # def create():
+    #     pass
+
+    # def update():
+    #     pass
+
+
+# class TodoCustomViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin, mixins.ListModelMixin,
+#     mixins.RetrieveModelMixin, GenericViewSet):
+#     queryset = Todo.objects.all()
+#     serializer_class = TodoModelSerialazer
+#     filterset_class = TodoFilter
+#     pagination_class = TodoLimitOffsetPagination
+#     permission_classes = [IsAuthenticated]
+
+#     def destroy(self, request, pk):
+#         instance = get_object_or_404(Todo, pk=pk)            
+#         instance.is_active = False        
+#         instance.save()
+#         todo = Todo.objects.all()       
+#         serialilzer_class = TodoModelSerialazer(todo, many=True, context={'request': request})
+#         return Response(serialilzer_class.data)

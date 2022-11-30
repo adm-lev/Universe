@@ -27,6 +27,7 @@ services:
     command: bash -c "
       ./wait-for-postgres.sh db
       && python manage.py migrate
+      && python manage.py superuser
       && gunicorn universe.wsgi -b 0.0.0.0:8080
       "
     depends_on:
