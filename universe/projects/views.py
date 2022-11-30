@@ -43,8 +43,20 @@ class CellCustomViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveMo
     # def create():
     #     pass
 
-    def update():
-        pass
+    def update(self, request, pk):
+        instance = get_object_or_404(Cell, pk=pk)
+        instance.hitted = True         
+        instance.save()
+        print('GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGg')
+        if instance.have_ship:
+            cur_ship = get_object_or_404(Ship, pk=request.data['ship_id'])
+            cur_ship.health -= 1
+            # if cur_ship.health == 0:
+            #     cur_ship.is_alive = False           
+            cur_ship.save()
+        
+        serializer_class = CellModelSerialazer(self.queryset, many=True, context={'request': request})
+        return Response(serializer_class.data)
 
 
 class ShipCustomViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
@@ -90,20 +102,3 @@ class GameCustomViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveMo
 
     # def update():
     #     pass
-
-
-# class TodoCustomViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin, mixins.ListModelMixin,
-#     mixins.RetrieveModelMixin, GenericViewSet):
-#     queryset = Todo.objects.all()
-#     serializer_class = TodoModelSerialazer
-#     filterset_class = TodoFilter
-#     pagination_class = TodoLimitOffsetPagination
-#     permission_classes = [IsAuthenticated]
-
-#     def destroy(self, request, pk):
-#         instance = get_object_or_404(Todo, pk=pk)            
-#         instance.is_active = False        
-#         instance.save()
-#         todo = Todo.objects.all()       
-#         serialilzer_class = TodoModelSerialazer(todo, many=True, context={'request': request})
-#         return Response(serialilzer_class.data)

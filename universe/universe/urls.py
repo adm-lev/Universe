@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 import universe.views
-from todos.views import ProjectCustomViewSet, TodoCustomViewSet, UserModelViewSet
+# from todos.views import ProjectCustomViewSet, TodoCustomViewSet, UserModelViewSet
 from projects.views import PlayerCustomViewSet, CellCustomViewSet, BoardCustomViewSet
 from projects.views import GameCustomViewSet, ShipCustomViewSet
 from rest_framework.authtoken import views as token_view
@@ -11,9 +11,9 @@ from graphene_django.views import GraphQLView
 from django.views.generic import TemplateView
 
 router = DefaultRouter()
-router.register('users', UserModelViewSet)
-router.register('projects', ProjectCustomViewSet)
-router.register('todos', TodoCustomViewSet)
+# router.register('users', UserModelViewSet)
+# router.register('projects', ProjectCustomViewSet)
+# router.register('todos', TodoCustomViewSet)
 router.register('players', PlayerCustomViewSet)
 router.register('ships', ShipCustomViewSet)
 router.register('cells', CellCustomViewSet)
