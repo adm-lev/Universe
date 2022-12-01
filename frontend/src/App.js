@@ -1,7 +1,7 @@
 // import logo from './logo.svg';
 import './App.css';
 import React from 'react';
-import UserList from './components/User';
+// import UserList from './components/User';
 // import MenuBlock from './components/Menu';
 import FooterBlock from './components/Footer';
 import axios from 'axios';
@@ -10,7 +10,7 @@ import axios from 'axios';
 // import tabSwitch from './tunning';
 import {BrowserRouter, Route, Routes, Link, Navigate} from 'react-router-dom'
 import NotFound404 from './components/NotFound404';
-import ProjectUser from './components/Userprojects';
+// import ProjectUser from './components/Userprojects';
 // import ProjectDetail from './components/ProjectDetail';
 import LoginForm from './components/Auth';
 import Cookies from 'universal-cookie';
@@ -24,11 +24,11 @@ class App extends React.Component {
   constructor (props){
     super(props);
     this.state = {
-      'users': [],      
+      // 'users': [],      
       'footer': [],
       'aboutMe': '',
-      'projects': [],
-      'notes': [],
+      // 'projects': [],
+      // 'notes': [],
       'accessToken': '',
       'refreshToken': '',
       'token': '',
@@ -42,35 +42,35 @@ class App extends React.Component {
   
 // *********************CRUD DATA***********************************
 
-  deleteUser (id) {
-    const headers = this.getHeaders();          
-    axios.delete(`${this.state.baseUrl}/users/${id}`, {headers})
-        .then(response => {         
-          this.state.users.results = this.state.users.results.filter((item) => item.id !== id); 
-          this.setState({});         
-        })
-        .catch(error => console.log(error))
-  }
+  // deleteUser (id) {
+  //   const headers = this.getHeaders();          
+  //   axios.delete(`${this.state.baseUrl}/users/${id}`, {headers})
+  //       .then(response => {         
+  //         this.state.users.results = this.state.users.results.filter((item) => item.id !== id); 
+  //         this.setState({});         
+  //       })
+  //       .catch(error => console.log(error))
+  // }
 
-  createUser (userName, firstName, lastName, email) {
-    const headers = this.getHeaders();
-    const data = {
-      userName: userName[0],
-      firstName: firstName[0],
-      lastName: lastName[0],
-      email: email[0]
-    };
+  // createUser (userName, firstName, lastName, email) {
+  //   const headers = this.getHeaders();
+  //   const data = {
+  //     userName: userName[0],
+  //     firstName: firstName[0],
+  //     lastName: lastName[0],
+  //     email: email[0]
+  //   };
 
-    console.log(data);
+   
 
-    axios.post(`${this.state.baseUrl}/users/`, data, {headers})
-        .then(response => {
-          const newUser = response.data;
-          this.state.users.results.push(newUser);
-          this.setState({});
-        })
-        .catch(error => console.log(error))
-  }
+  //   axios.post(`${this.state.baseUrl}/users/`, data, {headers})
+  //       .then(response => {
+  //         const newUser = response.data;
+  //         this.state.users.results.push(newUser);
+  //         this.setState({});
+  //       })
+  //       .catch(error => console.log(error))
+  // }
 
 // -----------------------CRUD DATA ----------------------------------------
 // ********************Authentication*************************************
@@ -78,18 +78,16 @@ class App extends React.Component {
   logout () {
     this.setToken('');
     this.setState({
-      'users': [],
-      'projects': [],
-      'notes': [],
+      // 'users': [],
+      // 'projects': [],
+      // 'notes': [],
       'loggedAs': '',
       
     })
   }
 
   isAuth () {
-                              // console.log(`access token contents: ${this.state.accessToken}`);
-                              // console.log(`isAuth token contents: ${this.state.token}`);
-                              // console.log(`isAuth is: ${!!this.state.token}`)
+                              
     // return !!this.state.accessToken;    
     
     return !!this.state.token;
@@ -117,10 +115,7 @@ class App extends React.Component {
     const user = cookies.get('loggedAs');
     const token = cookies.get('token');    
     // if (token['access']) {
-    // if (token) {
-                    // console.log(`boolean token: ${!!token}`);
-                    // console.log('token:' + token);
-                    // console.log('is Auth in tokenstorage ' + this.isAuth());
+    // if (token) {                    
       this.setState({
         // 'accessToken': token['access'],
         // 'accessToken': token,
@@ -129,10 +124,8 @@ class App extends React.Component {
         'loggedAs': user,
         'token': token
       }, () => this.loadData());      
-    // } else {
-    //   this.loadData();
-    // }
-                  // console.log(`user is: ${user}`);
+    
+                  
   }
 
   getToken (username,password) {
@@ -141,8 +134,7 @@ class App extends React.Component {
     // axios.post(baseUrl+'/token/', data).then(response => {
     axios.post(baseUrl+'-token-auth/', data).then(response => { 
       // this.setToken(response.data['token']);   
-                   // console.log(`saving token: ${response.data['token']}`)
-                   // console.log(`saving name: ${username}`)
+                   
       this.setToken(response.data['token'], username);   
       // this.setState({
       //   'loggedAs': username
@@ -162,12 +154,9 @@ class App extends React.Component {
   }
 
   loadData () {
-    const baseUrl = this.state.baseUrl;
-    const headers = this.getHeaders();
-    // const footer = [
-    //   'This project was built wia Docker Compose with engines of Django 3.2.8 on backend, React JS 18.2.0 on frontend and PostgreSQL as a DB. OS Ubuntu server 22.04.',
-    //   'Made by Eugene Lavrenko'
-    // ];
+    // const baseUrl = this.state.baseUrl;
+    // const headers = this.getHeaders();
+   
     const footer = [banners.footer, 'Made by Eugene Lavrenko'];
     const greetings = banners.aboutMe;
 
@@ -181,19 +170,8 @@ class App extends React.Component {
     //     'users': response.data,        
     //   });
            
-    // }).catch(error => console.log(error));    
+    // }).catch(error => console.log(error));       
    
-    // axios.get(baseUrl+'/projects/', {headers}).then(response => {
-    //   this.setState({
-    //     'projects': response.data,        
-    //   });
-    // }).catch(error => console.log(error));
-
-    // axios.get(baseUrl+'/todos/', {headers}).then(response => {
-    //   this.setState({
-    //     'notes': response.data,        
-    //   });
-    // }).catch(error => console.log(error));
   };
   
 // ******************************Authentication*************************************
@@ -215,29 +193,43 @@ class App extends React.Component {
 // *******************************ELEMENTS DECORATING*************************************
 // ********************************GAME ACTIONS******************************************
 
+createGame () {
+  const headers = this.getHeaders()
+  const data = {
+    player: this.state.loggedAs
+  };
 
+  const testEl = document.querySelector('#text')
+  console.log('create!')
+  testEl.textContent = ''
+  testEl.textContent += `Created game for ${this.state.loggedAs}`
+  axios.post(`${this.state.baseUrl}/game/`, data, {headers})
+        .then(response => {
+          console.log(`response: ${response}`)
+        })
+        .catch(error => console.log(error))
+
+}
 
 
 getCell () {
   // console.log('GET GET GET');
     const headers = this.getHeaders();
     const baseUrl = this.state.baseUrl;
-    const testEl = document.querySelector('#text')
+    // const testEl = document.querySelector('#text')
 
     axios.get(baseUrl+'/cells/', {headers}).then(response => {
       // this.setState({
       //   'notes': response.data,        
       // });
-      for (const i of response.data.results) {
-        testEl.textContent += i.id + ' '
-        testEl.textContent += i.xCoordinate + ' '
-        testEl.textContent += i.yCoordinate + ' '
-        testEl.textContent += i.board + ' '
-        testEl.textContent += i.haveShip + ' '
-        testEl.textContent += i.hitted + '\n'
-      }
-
-      // testEl.textContent += response.data.results
+      // for (const i of response.data.results) {
+      //   testEl.textContent += i.id + ' '
+      //   testEl.textContent += i.xCoordinate + ' '
+      //   testEl.textContent += i.yCoordinate + ' '
+      //   testEl.textContent += i.board + ' '
+      //   testEl.textContent += i.haveShip + ' '
+      //   testEl.textContent += i.hitted + '\n'
+      // }      
 
     }).catch(error => console.log(error));
 
@@ -318,14 +310,13 @@ clearCell () {
               <Route index element={<GreetingsBlock greetings={this.state.aboutMe}/>}/>
               {/* <Route path=":userId" element={<ProjectUser projects={this.state.projects}/>}/> */}
             </Route>      
-            {/* <Route exact path="/projects">
-              <Route index element={<ProjectList projects={this.state.projects}/>}/>
-              <Route path=":projectId" element={<ProjectDetail projects={this.state.projects}/>}/>
-            </Route>          */}
-            {/* <Route exact path="/todos" element={<NoteList notes={this.state.notes}/>}/> */}
+            
             <Route exact path="/game">
-             <Route index element={<GameItem getCell={() => this.getCell()} hitCell={(id) => this.hitCell(id)}
-                       clearCell={() => this.clearCell()} />}/>
+             <Route index element={<GameItem getCell={() => this.getCell()} 
+                                            hitCell={(id) => this.hitCell(id)}
+                                            isAuth={() => this.isAuth()}
+                                            createGame={() => this.createGame()}
+                                            clearCell={() => this.clearCell()} />}/>
             </Route>
             
             <Route path="*" element={<NotFound404/>}/>            

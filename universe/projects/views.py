@@ -14,6 +14,8 @@ from rest_framework.permissions import IsAuthenticated, AllowAny, DjangoModelPer
 # from universe.settings import SECRET_KEY
 # import logging
 from rest_framework.decorators import permission_classes
+from datetime import datetime
+
 
 
 
@@ -56,10 +58,7 @@ class CellCustomViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveMo
                     ship.is_alive = False
                 ship.save()    
             except Exception as inst:           
-                print(inst) 
-             
-            
-        
+                print(inst)          
         serializer_class = CellModelSerialazer(self.queryset, many=True, context={'request': request})
         return Response(serializer_class.data)
 
@@ -74,6 +73,7 @@ class ShipCustomViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveMo
 
     # def create():
     #     pass
+    
 
     # def update():
     #     pass
@@ -102,8 +102,79 @@ class GameCustomViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveMo
     # def destroy():
     #     pass
 
-    # def create():
-    #     pass
+    
+    def create(self, request):
+        try:
+            # print(request.data)
+            # time = datetime.now()
+            game = Game(name=4444)
+            game.save()  
+            #  Find the player in Player model or create new one with requested name
+            player = Player.objects.get(name=request.data['player'])
+            if not player:
+                player = Player(name=request.data['player'])
+            #  Create a new game with unique name
+            # game = Game(name=time)
+            # game.save()        
+
+            #  Create two new boards for the game        
+            board_1 = self.create_board('team1', game)
+            board_2 = self.create_board('team2', game)
+            #  Bind first team to the player. The second board is still empty!
+            player.board = board_1
+            player.save()    
+                    
+            #  Create some cells for the each board
+            self.create_cells(5, board_1)
+            self.create_cells(5, board_2)
+        
+            #  Filter cells by their board
+            team_one_cells = Cell.objects.filter(board=board_1)
+            team_two_cells = Cell.objects.filter(board=board_2)
+
+            for _ in range(2):
+                self.create_ship(board_1, 'cruiser')
+                self.create_ship(board_2, 'cruiser')
+            for _ in range(4):
+                self.create_ship(board_1, 'destroyer')
+                self.create_ship(board_2, 'destroyer')
+        except Exception as err:
+            # serializer_class = GameModelSerialazer(self.queryset, many=True, context={'request': request})
+            return Response(data=err, status=501)
+
+
+
+        
+                
+        serializer_class = GameModelSerialazer(self.queryset, many=True, context={'request': request})
+        return Response(serializer_class.data)
 
     # def update():
     #     pass
+
+
+    def create_cells(self, max, board):
+        max +=1
+        for i in range (1,max):
+            for j in range (1,max):
+                cell = Cell(x_coordinate=i, y_coordinate=j, board=board, cell_state=0)
+                cell.save()
+
+
+    def create_board(self, team, game):
+        board = Board(team=team, game_id=game)
+        board.save()
+        return board
+
+
+    def create_ship(self, board, type):
+        types = {
+            'battleship': 4,
+            'cruiser': 3,
+            'destroyer': 2,
+            'barque': 1,
+        }
+        ship = Ship(board=board,ship_type=type,max_health=types[type],health=types[type])
+        ship.save()
+
+    

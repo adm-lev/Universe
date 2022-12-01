@@ -86,7 +86,7 @@ class Player (models.Model):
 
     name = models.CharField(max_length=64, unique=True, help_text="Username", verbose_name='Username')
     # game_id = models.ForeignKey(Game, on_delete=models.CASCADE, blank=True, null=True, help_text='Game')
-    board = models.ForeignKey(Board, on_delete=models.CASCADE, blank=True, null=True, help_text='Game')
+    board = models.ForeignKey(Board, on_delete=models.SET_NULL, blank=True, null=True, help_text='Game')
     # team = models.CharField(max_length=64, blank=True, null=True, verbose_name='Team name')
     total_games = models.IntegerField(blank=True, null=True, verbose_name='Total games')
     total_wins = models.IntegerField(blank=True, null=True, verbose_name='Total wins')
