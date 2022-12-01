@@ -33,7 +33,7 @@ class App extends React.Component {
       'refreshToken': '',
       'token': '',
       'loggedAs': '',
-      // 'baseUrl': 'http://localhost:8000/api',
+      // 'baseUrl': 'http://localhost:8001/api',
       // 'baseUrl': 'http://185.208.207.158:8000/api',
       'baseUrl': 'https://devlev22.de:8043/api',
     };
@@ -251,7 +251,7 @@ hitCell (id) {
       hitted: true
     }
 
-    axios.put(`${this.state.baseUrl}/cells/${id}`, data, {headers})
+    axios.put(`${this.state.baseUrl}/cells/${id}/`, data, {headers})
         .then(response => {         
           // this.state.users.results = this.state.users.results.filter((item) => item.id !== id); 
           // this.setState({});         

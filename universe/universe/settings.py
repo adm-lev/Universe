@@ -65,6 +65,7 @@ ALLOWED_HOSTS = ['*']
 
 CORS_ALLOWED_ORIGINS = [
     
+    'http://localhost:3000',
     'http://185.208.207.158', 
     'http://devlev22.de',
     'https://devlev22.de',  
@@ -133,11 +134,20 @@ WSGI_APPLICATION = 'universe.wsgi.application'
 
 if DEBUG:
     DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': 'mydatabase', # This is where you put the name of the db file. 
+    #              # If one doesn't exist, it will be created at migration time.
+    # }
+    
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'mydatabase', # This is where you put the name of the db file. 
-                 # If one doesn't exist, it will be created at migration time.
-    }
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'universe',
+        'USER': 'webadmin',
+        'PASSWORD': DB_PASS,
+        'HOST': 'localhost',
+        'PORT': '5432',
+        }
 }
 else:
     DATABASES = {

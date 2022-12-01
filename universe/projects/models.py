@@ -57,7 +57,8 @@ class Ship (models.Model):
         verbose_name = 'Ship'
         verbose_name_plural = 'Ships'
     def __str__(self) -> str:
-        return f'{self.board}-{self.ship_type}({self.id})'
+        # return f'{self.board}-{self.ship_type}({self.id})'
+        return f'{self.id}'
 
 
 class Cell (models.Model):
