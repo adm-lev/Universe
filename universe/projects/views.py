@@ -47,12 +47,16 @@ class CellCustomViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveMo
         instance = get_object_or_404(Cell, pk=pk)
         instance.hitted = True         
         instance.save()
-        print('GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGg')
+        
         if instance.have_ship:
-            cur_ship = get_object_or_404(Ship, pk=request.data['ship_id'])
-            cur_ship.health -= 1
-            # if cur_ship.health == 0:
-            #     cur_ship.is_alive = False           
+
+            try:
+                cur_ship = get_object_or_404(Ship, pk=request.data['ship_id'])
+                cur_ship.health -= 1
+                if cur_ship.health == 0:
+                    cur_ship.is_alive = False  
+            except Exception as err:
+                print(err)       
             cur_ship.save()
         
         serializer_class = CellModelSerialazer(self.queryset, many=True, context={'request': request})
