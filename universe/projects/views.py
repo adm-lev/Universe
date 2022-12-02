@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
-from .models import Player, Cell, Ship, Board, Game
+from .models import Player, Cell, Ship, Board, Game, GameError
 from .serializers import PlayerModelSerialazer, CellModelSerialazer, ShipModelSerialazer
-from .serializers import BoardModelSerialazer, GameModelSerialazer
+from .serializers import BoardModelSerialazer, GameModelSerialazer, GameErrorModelSerialazer
 # from .filters import  
 from rest_framework import mixins
 from rest_framework.pagination import LimitOffsetPagination
@@ -106,14 +106,23 @@ class GameCustomViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveMo
     def create(self, request):
         try:
             # print(request.data)
-            # time = datetime.now()
-            game = Game(name=4444)
-            game.save()  
+            time = datetime.now()
+            err = GameError(text=request.data['player'])
+            err.save()
+            err = GameError(text=request.data['player'])
+            err.save()
             #  Find the player in Player model or create new one with requested name
-            player = Player.objects.get(name=request.data['player'])
-            if not player:
+            try:
+                player = Player.objects.get(name=request.data['player'])
+            # if not player:
+            except:
                 player = Player(name=request.data['player'])
+            # player = Player.objects.get(name=request['player'])
+            # if not player:
+            #     player = Player(name=request['player'])
             #  Create a new game with unique name
+            game = Game(name=time)
+            game.save() 
             # game = Game(name=time)
             # game.save()        
 
@@ -140,7 +149,10 @@ class GameCustomViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveMo
                 self.create_ship(board_2, 'destroyer')
         except Exception as err:
             # serializer_class = GameModelSerialazer(self.queryset, many=True, context={'request': request})
-            return Response(data=err, status=501)
+            # return Response(data=err, status=501)
+            print (err)
+            error = GameError(text=err)
+            error.save()
 
 
 
@@ -176,5 +188,18 @@ class GameCustomViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveMo
         }
         ship = Ship(board=board,ship_type=type,max_health=types[type],health=types[type])
         ship.save()
+
+
+
+
+
+class GameErrorModelWiewSet(ModelViewSet):
+    queryset = GameError.objects.all()
+    serializer_class = GameErrorModelSerialazer
+    permission_classes = [IsAuthenticated]
+    # pagination_class = TodoLimitOffsetPagination
+
+
+    
 
     

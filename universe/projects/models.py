@@ -98,6 +98,16 @@ class Player (models.Model):
         return f'{self.name}'
 
 
+class GameError(models.Model):
+
+     text = models.TextField(max_length=64, unique=False)
+     time_start = models.DateTimeField(auto_now_add=True)
+
+     def __str__(self) -> str:
+        return f'{self.id}'
+
+
+
 
 
 

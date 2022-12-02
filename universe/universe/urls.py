@@ -4,7 +4,7 @@ from rest_framework.routers import DefaultRouter
 import universe.views
 # from todos.views import ProjectCustomViewSet, TodoCustomViewSet, UserModelViewSet
 from projects.views import PlayerCustomViewSet, CellCustomViewSet, BoardCustomViewSet
-from projects.views import GameCustomViewSet, ShipCustomViewSet
+from projects.views import GameCustomViewSet, ShipCustomViewSet, GameErrorModelWiewSet
 from rest_framework.authtoken import views as token_view
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from graphene_django.views import GraphQLView
@@ -19,6 +19,7 @@ router.register('ships', ShipCustomViewSet)
 router.register('cells', CellCustomViewSet)
 router.register('board', BoardCustomViewSet)
 router.register('game', GameCustomViewSet)
+router.register('errors', GameErrorModelWiewSet)
 
 
 urlpatterns = [
