@@ -17,11 +17,11 @@ import { Link, Navigate } from "react-router-dom";
 
 const GamePreview = ({createGame, isAuth, gameName}) => {
     return (
-        <div>            
+        <div className="game-preview">            
                
-            {gameName ? <Navigate push to="field"/> : null}
+            {/* {gameName ? <Navigate push to="field"/> : null} */}
 
-            {/* <button id='create' onClick={() => createGame()}>Create new game</button> */}
+            
             {isAuth() ? <button id='create' onClick={() => createGame()}>
                             Create new game
                         </button > : <Link to="/login">Log in before create game</Link>}   

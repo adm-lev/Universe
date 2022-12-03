@@ -109,31 +109,14 @@ class GameCustomViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveMo
     
     def create(self, request):
         try:
-            # print(request.data)
-            # serializer = GameModelSerialazer(name='33333')
-            
-            # if serializer.is_valid():
-            #     serializer.save()
-            #     return Response(serializer.data, status=status.HTTP_201_CREATED)
-            # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            
+            time = int(datetime.now().timestamp())           
 
-
-
-            time = int(datetime.now().timestamp())
-            err = GameError(text=request.data['player'])
-            err.save()
-            err = GameError(text=request.data['player'])
-            err.save()
             #  Find the player in Player model or create new one with requested name
             try:
-                player = Player.objects.get(name=request.data['player'])
-            # if not player:
+                player = Player.objects.get(name=request.data['player'])           
             except:
                 player = Player(name=request.data['player'])
-            # player = Player.objects.get(name=request['player'])
-            # if not player:
-            #     player = Player(name=request['player'])
+       
             #  Create a new game with unique name
             game = Game(name=time)
             game.save() 
@@ -143,38 +126,63 @@ class GameCustomViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveMo
             #  Create two new boards for the game        
             board_1 = self.create_board('team1', game)
             board_2 = self.create_board('team2', game)
+
             #  Bind first team to the player. The second board is still empty!
             player.board = board_1
             player.save()    
                     
             #  Create some cells for the each board
             self.create_cells(5, board_1)
-            self.create_cells(5, board_2)
-        
-            #  Filter cells by their board
-            team_one_cells = Cell.objects.filter(board=board_1)
-            team_two_cells = Cell.objects.filter(board=board_2)
-
+            self.create_cells(5, board_2)        
+            
+            # Create some ships for the each board
             for _ in range(2):
                 self.create_ship(board_1, 'cruiser')
                 self.create_ship(board_2, 'cruiser')
             for _ in range(4):
                 self.create_ship(board_1, 'destroyer')
                 self.create_ship(board_2, 'destroyer')
-        except Exception as err:
-            # serializer_class = GameModelSerialazer(self.queryset, many=True, context={'request': request})
-            # return Response(data=err, status=501)
+        except Exception as err:          
             print (err)
             error = GameError(text=err)
             error.save()
 
+        #  Filter cells, ships by their board and compilling their serializers
+        team_one_cells = Cell.objects.filter(board=board_1)
+        team_two_cells = Cell.objects.filter(board=board_2)
+        boards = Board.objects.filter(game_id=game)
+        ships_1 = Ship.objects.filter(board=board_1)
+        ships_2 = Ship.objects.filter(board=board_2)
+        srz_game = GameModelSerialazer(game, many=False, context={'request': request})
+        srz_boards = BoardModelSerialazer(boards, many=True, context={'request': request})
+        srz_ships_1 = ShipModelSerialazer(ships_1, many=True, context={'request': request})
+        srz_ships_2 = ShipModelSerialazer(ships_2, many=True, context={'request': request})
+        srz_cells_1 = CellModelSerialazer(team_one_cells, many=True, context={'request': request})
+        srz_cells_2 = CellModelSerialazer(team_two_cells, many=True, context={'request': request})
+        
 
+        print({
+            "game":srz_game.data,
+            "cells1":srz_cells_1.data,
+            # "cells2":srz_cells_2.data,
+            "boards":srz_boards.data,
+            "ships1":srz_ships_1.data,
+            # "ships2":srz_ships_2.data
+        })
 
+        all_game_info = {
+            "game":srz_game.data,
+            "cells1":srz_cells_1.data,
+            # "cells2":srz_cells_2.data,
+            "boards":srz_boards.data,
+            "ships1":srz_ships_1.data,
+            # "ships2":srz_ships_2.data
+        }
         
                 
-        serializer_class = GameModelSerialazer(game, many=False, context={'request': request})
-        print(serializer_class.data)
-        return Response(serializer_class.data)
+        
+        # print(serializer_class.data)
+        return Response(all_game_info)
 
     # def update():
     #     pass

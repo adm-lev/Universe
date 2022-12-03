@@ -35,7 +35,9 @@ class App extends React.Component {
   logout () {
     this.setToken('');
     this.setState({     
-      'loggedAs': '',      
+      'loggedAs': '', 
+      'currentGameId': '',
+      'currentGameName': '',     
     })
   }
 
@@ -141,18 +143,43 @@ createGame () {
     player: this.state.loggedAs
   };
 
-  // const testEl = document.querySelector('#text')
+  const textEl = document.querySelector('#text')
+  const textEl1 = document.querySelector('#text1')
+  const textEl2 = document.querySelector('#text2')
   console.log('create!')
-  // testEl.textContent = ''
-  // testEl.textContent += `Created game for ${this.state.loggedAs}`
+  textEl.textContent = ''
+  textEl1.textContent = ''
+  textEl2.textContent = ''
+  
+  const myTeam = 'team1'
+ 
+  const myBoard = []
+
   axios.post(`${this.state.baseUrl}/game/`, data, {headers})
-        .then(response => {          
+        .then(response => { 
+          
+          const myShips = []
+          const myCells = []
+          textEl.textContent = response.data.game.id + '\n'
+          textEl.textContent = response.data.game.name + '\n'
+
+          for (const ship of response.data.ships1) {
+             myShips.push(ship)
+          }
+          for (const cell of response.data.cells1) {
+            myCells.push(cell)
+         }
+
+          textEl1.textContent = myCells[0].id;
+          
           this.setState({
-            'currentGameId': response.data.id,
-            'currentGameName': response.data.name
+            'myShips': myShips,
+            'myCells': myCells,
+            'currentGameId': response.data.game.id,
+            'currentGameName': response.data.game.name
           })
-          cookies.set('currentGameId', response.data.id)
-          cookies.set('currentGameName', response.data.name)
+          cookies.set('currentGameId', response.data.game.id)
+          cookies.set('currentGameName', response.data.game.name)
         })
         .catch(error => console.log(error))
 
@@ -163,20 +190,21 @@ getCell () {
   // console.log('GET GET GET');
     const headers = this.getHeaders();
     const baseUrl = this.state.baseUrl;
-    const testEl = document.querySelector('#text')
+    // const textEl1 = document.querySelector('#text')
+    // const textEl1 = document.querySelector('#text')
 
     axios.get(baseUrl+'/cells/', {headers}).then(response => {
       // this.setState({
       //   'notes': response.data,        
       // });
-      for (const i of response.data.results) {
-        testEl.textContent += i.id + ' '
-        testEl.textContent += i.xCoordinate + ' '
-        testEl.textContent += i.yCoordinate + ' '
-        testEl.textContent += i.board + ' '
-        testEl.textContent += i.haveShip + ' '
-        testEl.textContent += i.hitted + '\n'
-      }      
+      // for (const i of response.data.results) {
+      //   testEl.textContent += i.id + ' '
+      //   testEl.textContent += i.xCoordinate + ' '
+      //   testEl.textContent += i.yCoordinate + ' '
+      //   testEl.textContent += i.board + ' '
+      //   testEl.textContent += i.haveShip + ' '
+      //   testEl.textContent += i.hitted + '\n'
+      // }      
 
     }).catch(error => console.log(error));
 
@@ -239,14 +267,7 @@ clearCell () {
             <Route exact path="/" element={<Navigate to="/main"/>}/>
             <Route exact path="/login" element={<LoginForm isAuth={() => this.isAuth()} 
                         getToken={(username, password) => this.getToken(username, password)}/>}/>
-            {/* <Route exact path="/users/create" element={<UserForm 
-              createUser={(userName, firstName, lastname, email) => 
-              this.createUser(userName, firstName, lastname, email)}/>}/> */}
-            {/* <Route exact path="/users">
-              <Route index element={<UserList  users={this.state.users} 
-                                              deleteUser={id => this.deleteUser(id)}/>}/>
-              <Route path=":userId" element={<ProjectUser projects={this.state.projects}/>}/>
-            </Route>   */}
+           
             <Route exact path="/main">
               <Route index element={<GreetingsBlock greetings={this.state.aboutMe}/>}/>
               {/* <Route path=":userId" element={<ProjectUser projects={this.state.projects}/>}/> */}
@@ -257,14 +278,14 @@ clearCell () {
                                               createGame={() => this.createGame()}
                                               gameName={this.state.currentGameName}/>}/>   
 
-              <Route path="field" element={<GameField getCell={() => this.getCell()}
+              <Route path="field" element={<GameField createGame={() => this.createGame()}
                                         clearCell={() => this.clearCell()} 
-                                        gameName={this.state.currentGameName}                                      
-                                        itCell={(id) => this.hitCell(id)}/>}/>
-            </Route>
-            {/* <Route exact path="/gamefeeld">
-            <Route index element={<GameField/>}/>
-            </Route> */}
+                                        gameName={this.state.currentGameName} 
+                                        setState={() => this.setState()} 
+                                        myCells={this.state.myCells}
+                                        myShips={this.state.myShips}                                    
+                                        hitCell={(id) => this.hitCell(id)}/>}/>
+            </Route>           
             <Route path="*" element={<NotFound404/>}/>            
           </Routes>
         </BrowserRouter>                

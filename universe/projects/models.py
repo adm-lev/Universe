@@ -27,6 +27,15 @@ class Game (models.Model):
     def __str__(self) -> str:
         return f'{self.name}'
 
+    # def get_full_info(self):
+    #     # boards = Board.objects.filter(game_id=id)
+    #     team_1, team_2 = Board.objects.filter(game_id=self.id)
+        
+    #     return [team_1, team_2]
+
+
+
+
 
 class Board (models.Model):
 
