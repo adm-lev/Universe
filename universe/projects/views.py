@@ -15,8 +15,11 @@ from rest_framework.permissions import IsAuthenticated, AllowAny, DjangoModelPer
 # import logging
 from rest_framework.decorators import permission_classes
 from datetime import datetime
+from rest_framework import status
 
 
+class CommonLimitOffsetPagination(LimitOffsetPagination):
+    default_limit = 100
 
 
 class PlayerCustomViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
@@ -38,6 +41,7 @@ class CellCustomViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveMo
     queryset = Cell.objects.all()
     serializer_class = CellModelSerialazer
     permission_classes = [IsAuthenticated]
+    pagination_class = CommonLimitOffsetPagination
 
     # def destroy():
     #     pass
@@ -106,7 +110,17 @@ class GameCustomViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveMo
     def create(self, request):
         try:
             # print(request.data)
-            time = datetime.now()
+            # serializer = GameModelSerialazer(name='33333')
+            
+            # if serializer.is_valid():
+            #     serializer.save()
+            #     return Response(serializer.data, status=status.HTTP_201_CREATED)
+            # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
+
+
+
+            time = int(datetime.now().timestamp())
             err = GameError(text=request.data['player'])
             err.save()
             err = GameError(text=request.data['player'])
@@ -158,7 +172,8 @@ class GameCustomViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveMo
 
         
                 
-        serializer_class = GameModelSerialazer(self.queryset, many=True, context={'request': request})
+        serializer_class = GameModelSerialazer(game, many=False, context={'request': request})
+        print(serializer_class.data)
         return Response(serializer_class.data)
 
     # def update():

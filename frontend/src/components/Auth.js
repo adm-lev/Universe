@@ -1,5 +1,5 @@
 import React from "react";
-
+import { Navigate } from "react-router-dom";
 
 class LoginForm extends React.Component {
 
@@ -24,12 +24,16 @@ class LoginForm extends React.Component {
 
     render() {
         return(
+
+            
+
             <form className="login-form" onSubmit={(event) => this.handleSubmit(event)}>
                 <input type="text" name="login" placeholder="login"
                     value={this.state.login} onChange={(event) => this.handleChange(event)}/>
                 <input type="password" name="password" placeholder="password"
                     value={this.state.password} onChange={(event) => this.handleChange(event)}/>
                 <input type="submit" value="Login"/>
+                {this.props.isAuth() ? <Navigate push to="/game"/> : null}
             </form>
         );
     }

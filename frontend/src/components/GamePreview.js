@@ -1,30 +1,34 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
+// import { redirect } from "react-router-dom";
+// import { Redirect } from "react-router";
 
 
 
+// const [state, setState] = setState({ redirect: True })
+
+//   // достаточно поменять значение state
+//   // что бы произошел redirect
+
+//   if (state.redirect) {
+//     return <Redirect push to="field" />
+//   }
 
 
-const GameItem = ({clearCell, getCell, hitCell, createGame, isAuth}) => {
+const GamePreview = ({createGame, isAuth, gameName}) => {
     return (
-        <div>
+        <div>            
+               
+            {gameName ? <Navigate push to="field"/> : null}
 
-
-
-            <button  id='get' onClick={() => getCell()}>GET</button>
-            <button id='put' onClick={() => hitCell(1)}>PUT1</button>
-            
-
-            <textarea id='text'></textarea>
-            <button id='clear' onClick={() => clearCell()}>clear</button>
             {/* <button id='create' onClick={() => createGame()}>Create new game</button> */}
             {isAuth() ? <button id='create' onClick={() => createGame()}>
                             Create new game
-                        </button > : <Link to="/login">Log in befoe create game</Link>}
-            
+                        </button > : <Link to="/login">Log in before create game</Link>}   
+                        <Link to='field'>to field!</Link>         
         </div>
         )
 };
 
 
-export default GameItem;
+export default GamePreview;

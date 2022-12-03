@@ -1,97 +1,47 @@
-// import logo from './logo.svg';
 import './App.css';
 import React from 'react';
-// import UserList from './components/User';
-// import MenuBlock from './components/Menu';
 import FooterBlock from './components/Footer';
 import axios from 'axios';
-// import ProjectList from './components/Projects';
-// import NoteList from './components/Notes';
-// import tabSwitch from './tunning';
 import {BrowserRouter, Route, Routes, Link, Navigate} from 'react-router-dom'
 import NotFound404 from './components/NotFound404';
-// import ProjectUser from './components/Userprojects';
-// import ProjectDetail from './components/ProjectDetail';
 import LoginForm from './components/Auth';
 import Cookies from 'universal-cookie';
-// import UserForm from './components/UserForm';
 import banners from './components/banners';
 import GreetingsBlock from './components/Greetings';
-// import MainPage from './components/MainPage';
-import GameItem from './components/GamePreview';
+import GamePreview from './components/GamePreview';
+import GameField from './components/GameField';
 
 class App extends React.Component {
   constructor (props){
     super(props);
-    this.state = {
-      // 'users': [],      
+    this.state = {          
       'footer': [],
-      'aboutMe': '',
-      // 'projects': [],
-      // 'notes': [],
-      'accessToken': '',
-      'refreshToken': '',
+      'aboutMe': '',      
+      // 'accessToken': '',
+      // 'refreshToken': '',
       'token': '',
       'loggedAs': '',
-      // 'baseUrl': 'http://localhost:8001/api',
-      // 'baseUrl': 'http://185.208.207.158:8000/api',
+      'currentGameId': '',
+      'currentGameName': '',
+      // 'baseUrl': 'http://localhost:8001/api',      
       'baseUrl': 'https://devlev22.de:8043/api',
     };
   }
 
   
-// *********************CRUD DATA***********************************
 
-  // deleteUser (id) {
-  //   const headers = this.getHeaders();          
-  //   axios.delete(`${this.state.baseUrl}/users/${id}`, {headers})
-  //       .then(response => {         
-  //         this.state.users.results = this.state.users.results.filter((item) => item.id !== id); 
-  //         this.setState({});         
-  //       })
-  //       .catch(error => console.log(error))
-  // }
-
-  // createUser (userName, firstName, lastName, email) {
-  //   const headers = this.getHeaders();
-  //   const data = {
-  //     userName: userName[0],
-  //     firstName: firstName[0],
-  //     lastName: lastName[0],
-  //     email: email[0]
-  //   };
-
-   
-
-  //   axios.post(`${this.state.baseUrl}/users/`, data, {headers})
-  //       .then(response => {
-  //         const newUser = response.data;
-  //         this.state.users.results.push(newUser);
-  //         this.setState({});
-  //       })
-  //       .catch(error => console.log(error))
-  // }
-
-// -----------------------CRUD DATA ----------------------------------------
 // ********************Authentication*************************************
 
   logout () {
     this.setToken('');
-    this.setState({
-      // 'users': [],
-      // 'projects': [],
-      // 'notes': [],
-      'loggedAs': '',
-      
+    this.setState({     
+      'loggedAs': '',      
     })
   }
 
-  isAuth () {
-                              
+  isAuth () {                              
     // return !!this.state.accessToken;    
-    
-    return !!this.state.token;
-    
+    return !!this.state.token;    
   }
 
   setToken (token, username) {      
@@ -113,19 +63,19 @@ class App extends React.Component {
     const cookies = new Cookies();
     // const token = cookies.get('accessToken');
     const user = cookies.get('loggedAs');
-    const token = cookies.get('token');    
+    const token = cookies.get('token');
+    const gameName = cookies.get('currentGameName');
+    const gameId = cookies.get('currentGameId');    
     // if (token['access']) {
     // if (token) {                    
       this.setState({
-        // 'accessToken': token['access'],
-        // 'accessToken': token,
-        
+        // 'accessToken': token['access'],              
         // 'refreshToken': token['refresh'],
         'loggedAs': user,
-        'token': token
-      }, () => this.loadData());      
-    
-                  
+        'token': token,
+        'currentGameName': gameName,
+        'currentGameId': gameId
+      }, () => this.loadData());                  
   }
 
   getToken (username,password) {
@@ -133,8 +83,7 @@ class App extends React.Component {
     const data = {username: username, password: password};    
     // axios.post(baseUrl+'/token/', data).then(response => {
     axios.post(baseUrl+'-token-auth/', data).then(response => { 
-      // this.setToken(response.data['token']);   
-                   
+      // this.setToken(response.data['token']);                   
       this.setToken(response.data['token'], username);   
       // this.setState({
       //   'loggedAs': username
@@ -163,16 +112,8 @@ class App extends React.Component {
     this.setState({      
       'footer': footer,
       'aboutMe': greetings,
-    });
-
-    // axios.get(baseUrl+'/users/',{headers}).then(response => {
-    //   this.setState({
-    //     'users': response.data,        
-    //   });
-           
-    // }).catch(error => console.log(error));       
-   
-  };
+    });   
+  }
   
 // ******************************Authentication*************************************
 // *******************************ELEMENTS DECORATING*************************************
@@ -195,17 +136,23 @@ class App extends React.Component {
 
 createGame () {
   const headers = this.getHeaders()
+  const cookies = new Cookies()
   const data = {
     player: this.state.loggedAs
   };
 
-  const testEl = document.querySelector('#text')
+  // const testEl = document.querySelector('#text')
   console.log('create!')
-  testEl.textContent = ''
-  testEl.textContent += `Created game for ${this.state.loggedAs}`
+  // testEl.textContent = ''
+  // testEl.textContent += `Created game for ${this.state.loggedAs}`
   axios.post(`${this.state.baseUrl}/game/`, data, {headers})
-        .then(response => {
-          console.log(`response: ${response}`)
+        .then(response => {          
+          this.setState({
+            'currentGameId': response.data.id,
+            'currentGameName': response.data.name
+          })
+          cookies.set('currentGameId', response.data.id)
+          cookies.set('currentGameName', response.data.name)
         })
         .catch(error => console.log(error))
 
@@ -216,20 +163,20 @@ getCell () {
   // console.log('GET GET GET');
     const headers = this.getHeaders();
     const baseUrl = this.state.baseUrl;
-    // const testEl = document.querySelector('#text')
+    const testEl = document.querySelector('#text')
 
     axios.get(baseUrl+'/cells/', {headers}).then(response => {
       // this.setState({
       //   'notes': response.data,        
       // });
-      // for (const i of response.data.results) {
-      //   testEl.textContent += i.id + ' '
-      //   testEl.textContent += i.xCoordinate + ' '
-      //   testEl.textContent += i.yCoordinate + ' '
-      //   testEl.textContent += i.board + ' '
-      //   testEl.textContent += i.haveShip + ' '
-      //   testEl.textContent += i.hitted + '\n'
-      // }      
+      for (const i of response.data.results) {
+        testEl.textContent += i.id + ' '
+        testEl.textContent += i.xCoordinate + ' '
+        testEl.textContent += i.yCoordinate + ' '
+        testEl.textContent += i.board + ' '
+        testEl.textContent += i.haveShip + ' '
+        testEl.textContent += i.hitted + '\n'
+      }      
 
     }).catch(error => console.log(error));
 
@@ -277,13 +224,7 @@ clearCell () {
           <nav onClick={(event) => this.selectedMenu(event)} className='navigation'>
             <li className="menu-selected menu-item">
               <Link to="/">Main</Link>
-            </li>
-            {/* <li className="menu-item">
-              <Link to="/projects">Projects</Link>
-            </li>
-            <li className="menu-item">
-              <Link to="/todos">Notes</Link>
-            </li>   */}
+            </li>            
             <li className="menu-item">
               <Link to="/game">Game</Link>
             </li> 
@@ -296,8 +237,8 @@ clearCell () {
         </div>
           <Routes>
             <Route exact path="/" element={<Navigate to="/main"/>}/>
-            <Route exact path="/login" element={<LoginForm getToken={(username, password) => 
-              this.getToken(username, password)}/>}/>
+            <Route exact path="/login" element={<LoginForm isAuth={() => this.isAuth()} 
+                        getToken={(username, password) => this.getToken(username, password)}/>}/>
             {/* <Route exact path="/users/create" element={<UserForm 
               createUser={(userName, firstName, lastname, email) => 
               this.createUser(userName, firstName, lastname, email)}/>}/> */}
@@ -312,13 +253,18 @@ clearCell () {
             </Route>      
             
             <Route exact path="/game">
-             <Route index element={<GameItem getCell={() => this.getCell()} 
-                                            hitCell={(id) => this.hitCell(id)}
-                                            isAuth={() => this.isAuth()}
-                                            createGame={() => this.createGame()}
-                                            clearCell={() => this.clearCell()} />}/>
+              <Route index element={<GamePreview isAuth={() => this.isAuth()}
+                                              createGame={() => this.createGame()}
+                                              gameName={this.state.currentGameName}/>}/>   
+
+              <Route path="field" element={<GameField getCell={() => this.getCell()}
+                                        clearCell={() => this.clearCell()} 
+                                        gameName={this.state.currentGameName}                                      
+                                        itCell={(id) => this.hitCell(id)}/>}/>
             </Route>
-            
+            {/* <Route exact path="/gamefeeld">
+            <Route index element={<GameField/>}/>
+            </Route> */}
             <Route path="*" element={<NotFound404/>}/>            
           </Routes>
         </BrowserRouter>                
