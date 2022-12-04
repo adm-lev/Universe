@@ -19,13 +19,14 @@ from rest_framework import status
 
 
 class CommonLimitOffsetPagination(LimitOffsetPagination):
-    default_limit = 100
+    default_limit = 150
 
 
 class PlayerCustomViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
     queryset = Player.objects.all()
     serializer_class = PlayerModelSerialazer
     permission_classes = [IsAuthenticated]
+
 
     # def destroy():
     #     pass
@@ -37,17 +38,25 @@ class PlayerCustomViewSet(GenericViewSet, mixins.ListModelMixin, mixins.Retrieve
     #     pass
 
 
-class CellCustomViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
+class CellCustomViewSet(GenericViewSet, mixins.RetrieveModelMixin):
     queryset = Cell.objects.all()
     serializer_class = CellModelSerialazer
     permission_classes = [IsAuthenticated]
     pagination_class = CommonLimitOffsetPagination
+    
 
     # def destroy():
     #     pass
 
     # def create():
     #     pass
+
+    # def list(self, request):
+    #     print(request.data)
+
+    #     return Response()
+
+
 
     def update(self, request, pk):
         instance = get_object_or_404(Cell, pk=pk)
@@ -62,7 +71,9 @@ class CellCustomViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveMo
                     ship.is_alive = False
                 ship.save()    
             except Exception as inst:           
-                print(inst)          
+                print (inst)
+                error = GameError(text=inst)
+                error.save()         
         serializer_class = CellModelSerialazer(self.queryset, many=True, context={'request': request})
         return Response(serializer_class.data)
 
@@ -71,6 +82,7 @@ class ShipCustomViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveMo
     queryset = Ship.objects.all()
     serializer_class = ShipModelSerialazer
     permission_classes = [IsAuthenticated]
+    pagination_class = CommonLimitOffsetPagination
 
     # def destroy():
     #     pass
@@ -83,10 +95,32 @@ class ShipCustomViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveMo
     #     pass
 
 
-class BoardCustomViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
+class BoardCustomViewSet(GenericViewSet, mixins.ListModelMixin):
     queryset = Board.objects.all()
     serializer_class = BoardModelSerialazer
     permission_classes = [IsAuthenticated]
+
+    def retrieve(self, request, pk):
+        board = Board.objects.get(pk=pk)
+
+        cells = Cell.objects.filter(board=board)
+        ships = Ship.objects.filter(board=board)
+
+        srz_ships = ShipModelSerialazer(ships, many=True, context={'request': request})
+        srz_cells = CellModelSerialazer(cells, many=True, context={'request': request})
+
+        # print({
+        #     'ships': srz_ships.data,
+        #     'cells': srz_cells.data
+        # })
+
+        board_info = {
+            'ships': srz_ships.data,
+            'cells': srz_cells.data
+        }
+        
+
+        return Response(board_info)
 
     # def destroy():
     #     pass
@@ -151,7 +185,8 @@ class GameCustomViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveMo
         ships_1 = Ship.objects.filter(board=board_1)
         # ships_2 = Ship.objects.filter(board=board_2)
         srz_game = GameModelSerialazer(game, many=False, context={'request': request})
-        srz_boards = BoardModelSerialazer(boards, many=True, context={'request': request})
+        # srz_boards = BoardModelSerialazer(boards, many=True, context={'request': request})
+        srz_board = BoardModelSerialazer(board_1, many=False, context={'request': request})
         srz_ships_1 = ShipModelSerialazer(ships_1, many=True, context={'request': request})
         # srz_ships_2 = ShipModelSerialazer(ships_2, many=True, context={'request': request})
         srz_cells_1 = CellModelSerialazer(team_one_cells, many=True, context={'request': request})
@@ -169,9 +204,9 @@ class GameCustomViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveMo
 
         all_game_info = {
             "game":srz_game.data,
+            "board":srz_board.data,
             "cells1":srz_cells_1.data,
-            # "cells2":srz_cells_2.data,
-            "boards":srz_boards.data,
+            # "cells2":srz_cells_2.data,            
             "ships1":srz_ships_1.data,
             # "ships2":srz_ships_2.data
         }
@@ -201,10 +236,10 @@ class GameCustomViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveMo
 
     def create_ship(self, board, type):
         types = {
-            'battleship': 4,
-            'cruiser': 3,
-            'destroyer': 2,
-            'barque': 1,
+            'battleship(4)': 4,
+            'cruiser(3)': 3,
+            'destroyer(2)': 2,
+            'barque(1)': 1,
         }
         ship = Ship(board=board,ship_type=type,max_health=types[type],health=types[type])
         ship.save()
@@ -212,13 +247,13 @@ class GameCustomViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveMo
 
     def create_fleet(self, board):
         
-        self.create_ship(board, 'battleship')            
+        self.create_ship(board, 'battleship(4)')            
         for _ in range(2):
-            self.create_ship(board, 'cruiser')            
+            self.create_ship(board, 'cruiser(3)')            
         for _ in range(3):
-            self.create_ship(board, 'destroyer')            
+            self.create_ship(board, 'destroyer(2)')            
         for _ in range(4):
-            self.create_ship(board, 'barque')
+            self.create_ship(board, 'barque(1)')
             
 
 

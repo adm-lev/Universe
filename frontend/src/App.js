@@ -10,6 +10,7 @@ import banners from './components/banners';
 import GreetingsBlock from './components/Greetings';
 import GamePreview from './components/GamePreview';
 import GameField from './components/GameField';
+import { helpText } from './components/functFile';
 
 class App extends React.Component {
   constructor (props){
@@ -23,6 +24,10 @@ class App extends React.Component {
       'loggedAs': '',
       'currentGameId': '',
       'currentGameName': '',
+      'currentBoard': '',
+      'myShips': '',
+      'myCells': '',
+      'shipsOk': false,
       // 'baseUrl': 'http://localhost:8001/api',      
       'baseUrl': 'https://devlev22.de:8043/api',
     };
@@ -68,8 +73,9 @@ class App extends React.Component {
     const token = cookies.get('token');
     const gameName = cookies.get('currentGameName');
     const gameId = cookies.get('currentGameId');
-    const cells = cookies.get('myCells');
-    const ships = cookies.get('myShips');
+    const board = cookies.get('currentBoard');
+    // const cells = cookies.get('myCells');
+    // const ships = cookies.get('myShips');
     // if (token['access']) {
     // if (token) {                    
       this.setState({
@@ -79,8 +85,9 @@ class App extends React.Component {
         'token': token,
         'currentGameName': gameName,
         'currentGameId': gameId,
-        'myShips': ships,
-        'myCells': cells,
+        'currentBoard': board,
+        // 'myShips': ships,
+        // 'myCells': cells,
       }, () => this.loadData());                  
   }
 
@@ -114,6 +121,27 @@ class App extends React.Component {
    
     const footer = [banners.footer, 'Made by Eugene Lavrenko'];
     const greetings = banners.aboutMe;
+    const headers = this.getHeaders()
+
+    const data = {
+      game_name: this.state.currentGameName
+    }
+
+    // console.log('board: '+this.state.currentBoard)
+
+    if (this.state.currentGameName){
+      axios.get(`${this.state.baseUrl}/board/${this.state.currentBoard}`, {headers}).then(response => {
+            // console.log(response.data)
+            this.setState({
+              'myShips': response.data.ships,
+              'myCells': response.data.cells
+            })
+
+
+      }).catch(error => console.log(error));
+    }
+    
+
 
     this.setState({      
       'footer': footer,
@@ -137,7 +165,13 @@ class App extends React.Component {
     }    
   }
 
+  // helpText () {
 
+  //   const textEl = document.querySelector('#help');
+
+  //   textEl.innerHTML = 'Choose each ship below and select proper number of cells on the field'
+
+  // }
 
 
 // *******************************ELEMENTS DECORATING*************************************
@@ -179,15 +213,24 @@ createGame () {
           this.setState({
             'myShips': myShips,
             'myCells': myCells,
+            'currentBoard': response.data.board.id,
             'currentGameId': response.data.game.id,
             'currentGameName': response.data.game.name
+          }, () => {
+            cookies.set('currentGameId', response.data.game.id)
+            cookies.set('currentGameName', response.data.game.name)            
+            cookies.set('currentBoard', response.data.board.id)
+            
           })
 
+          // console.log(myCells)
 
-          cookies.set('currentGameId', response.data.game.id)
-          cookies.set('currentGameName', response.data.game.name)
-          cookies.set('myCells', myCells)
-          cookies.set('myShips', myShips)
+
+          // cookies.set('currentGameId', response.data.game.id)
+          // cookies.set('currentGameName', response.data.game.name)
+          // cookies.set('testcoc', myCells)
+          // cookies.set('myCells', this.state.myCells)
+          // cookies.set('myShips', myShips)
 
           // textEl.textContent = response.data.game.id + '\n'
           // textEl.textContent = response.data.game.name + '\n'
@@ -254,8 +297,7 @@ clearCell () {
 // ********************************GAME ACTIONS******************************************
 // *********************************RENDER*******************************************
   componentDidMount() {   
-    this.getTokenStorage();
-    // this.addNumbers();
+    this.getTokenStorage();   
   }
 
   render() {
@@ -279,6 +321,8 @@ clearCell () {
         </div>
           <Routes>
             <Route exact path="/" element={<Navigate to="/main"/>}/>
+            {!this.state.currentGameName ? <Route exact path="/game/field" 
+                                                element={<Navigate to="/game"/>}/> : null}
             <Route exact path="/login" element={<LoginForm isAuth={() => this.isAuth()} 
                         getToken={(username, password) => this.getToken(username, password)}/>}/>
            
@@ -293,12 +337,14 @@ clearCell () {
                                               gameName={this.state.currentGameName}/>}/>   
 
               <Route path="field" element={<GameField  createGame={() => this.createGame()}
-                                        clearCell={() => this.clearCell()} 
-                                        gameName={this.state.currentGameName} 
-                                        setState={() => this.setState()} 
-                                        myCells={this.state.myCells}
-                                        myShips={this.state.myShips}
-                                        addNumbers={(numbers) => this.addNumbers(numbers)}                                    
+                                        // clearCell={() => this.clearCell()} 
+                                        // gameName={this.state.currentGameName} 
+                                        // setState={() => this.setState()} 
+                                        // myCells={this.state.myCells}
+                                        // myShips={this.state.myShips}
+                                        helpText={()=>helpText()}
+                                        state={this.state}
+                                        // addNumbers={(numbers) => this.addNumbers(numbers)}                                    
                                         hitCell={(id) => this.hitCell(id)}/>}/>
             </Route>           
             <Route path="*" element={<NotFound404/>}/>            
