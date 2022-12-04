@@ -132,16 +132,13 @@ class GameCustomViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveMo
             player.save()    
                     
             #  Create some cells for the each board
-            self.create_cells(5, board_1)
-            self.create_cells(5, board_2)        
+            self.create_cells(10, board_1)
+            self.create_cells(10, board_2)        
             
             # Create some ships for the each board
-            for _ in range(2):
-                self.create_ship(board_1, 'cruiser')
-                self.create_ship(board_2, 'cruiser')
-            for _ in range(4):
-                self.create_ship(board_1, 'destroyer')
-                self.create_ship(board_2, 'destroyer')
+            self.create_fleet(board_1)
+            self.create_fleet(board_2)
+
         except Exception as err:          
             print (err)
             error = GameError(text=err)
@@ -149,26 +146,26 @@ class GameCustomViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveMo
 
         #  Filter cells, ships by their board and compilling their serializers
         team_one_cells = Cell.objects.filter(board=board_1)
-        team_two_cells = Cell.objects.filter(board=board_2)
+        # team_two_cells = Cell.objects.filter(board=board_2)
         boards = Board.objects.filter(game_id=game)
         ships_1 = Ship.objects.filter(board=board_1)
-        ships_2 = Ship.objects.filter(board=board_2)
+        # ships_2 = Ship.objects.filter(board=board_2)
         srz_game = GameModelSerialazer(game, many=False, context={'request': request})
         srz_boards = BoardModelSerialazer(boards, many=True, context={'request': request})
         srz_ships_1 = ShipModelSerialazer(ships_1, many=True, context={'request': request})
-        srz_ships_2 = ShipModelSerialazer(ships_2, many=True, context={'request': request})
+        # srz_ships_2 = ShipModelSerialazer(ships_2, many=True, context={'request': request})
         srz_cells_1 = CellModelSerialazer(team_one_cells, many=True, context={'request': request})
-        srz_cells_2 = CellModelSerialazer(team_two_cells, many=True, context={'request': request})
+        # srz_cells_2 = CellModelSerialazer(team_two_cells, many=True, context={'request': request})
         
 
-        print({
-            "game":srz_game.data,
-            "cells1":srz_cells_1.data,
-            # "cells2":srz_cells_2.data,
-            "boards":srz_boards.data,
-            "ships1":srz_ships_1.data,
-            # "ships2":srz_ships_2.data
-        })
+        # print({
+        #     "game":srz_game.data,
+        #     "cells1":srz_cells_1.data,
+        #     # "cells2":srz_cells_2.data,
+        #     "boards":srz_boards.data,
+        #     "ships1":srz_ships_1.data,
+        #     # "ships2":srz_ships_2.data
+        # })
 
         all_game_info = {
             "game":srz_game.data,
@@ -213,6 +210,16 @@ class GameCustomViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveMo
         ship.save()
 
 
+    def create_fleet(self, board):
+        
+        self.create_ship(board, 'battleship')            
+        for _ in range(2):
+            self.create_ship(board, 'cruiser')            
+        for _ in range(3):
+            self.create_ship(board, 'destroyer')            
+        for _ in range(4):
+            self.create_ship(board, 'barque')
+            
 
 
 

@@ -19,13 +19,14 @@ const GamePreview = ({createGame, isAuth, gameName}) => {
     return (
         <div className="game-preview">            
                
-            {/* {gameName ? <Navigate push to="field"/> : null} */}
+            
 
             
             {isAuth() ? <button id='create' onClick={() => createGame()}>
                             Create new game
                         </button > : <Link to="/login">Log in before create game</Link>}   
-                        <Link to='field'>to field!</Link>         
+                        <Link to='field'>to field!</Link>  
+                        {gameName ? <Navigate push to="field"/> : null}       
         </div>
         )
 };

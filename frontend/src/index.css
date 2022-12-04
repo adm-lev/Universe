@@ -28,55 +28,42 @@ ul, nav {
 .game-field, .game-preview {
   display: flex;
   justify-content: space-around;
-  background-color: gray;
+  background-color: rgb(228, 239, 182);
 }
 
 .cell-list {
   display: flex;
   justify-content:center;
   flex-wrap: wrap;
-  border: 1px solid black;
-  width: 200px;
-  height: 200px;
-  margin: 1.5%;
-  padding: 1.5%;
+  /* border: 1px solid black; */
+  width: 280px;
+  height: 280px;
+  margin: 0;
+  padding: 0%;
 }
 
 .cell-item {
   border: 1px solid black;
-  flex-basis: 16%;
+  flex-basis: 8%;
+  background-color: steelblue;
+  text-align: center;
 }
 
-/* .create-btn {
-  border: 1px solid black;
-  border-radius: 10px;
-  padding: 10px 15px;
-  background-color: antiquewhite;
-  margin: 100px 0 0 10px;
-  
-} */
-
-/* .create-btn:hover {
-  background-color: rgba(42, 214, 197, 0.989);
+.ship-list {
+  display: flex;
+  flex-wrap: wrap;
+  text-align: center;
+  padding: 1%;
+  width: 280px;
 }
 
-.project-det-item {
-  background-color: gray;
-} */
-
-/* .user-list, .project-list, .note-list {
-  font-weight: 600;
+.ship {
   border: 1px solid black;
-} */
-
-/* .user-item, .project-item, .note-item, .project-det-item {
-  border: 1px solid black;
-} */
-
-/* .user-item li, .user-list li, .project-item li, .project-list li, .note-item li, .note-list li {
-  height: 50px;
-  padding: 5px;
-} */
+  flex-basis: 30%;
+  border-radius: 14px;
+  margin: 0.5%;
+  background-color: cadetblue;
+}
 
 .menu-item {
   border: 1px solid;

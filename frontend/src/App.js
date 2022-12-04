@@ -67,7 +67,9 @@ class App extends React.Component {
     const user = cookies.get('loggedAs');
     const token = cookies.get('token');
     const gameName = cookies.get('currentGameName');
-    const gameId = cookies.get('currentGameId');    
+    const gameId = cookies.get('currentGameId');
+    const cells = cookies.get('myCells');
+    const ships = cookies.get('myShips');
     // if (token['access']) {
     // if (token) {                    
       this.setState({
@@ -76,7 +78,9 @@ class App extends React.Component {
         'loggedAs': user,
         'token': token,
         'currentGameName': gameName,
-        'currentGameId': gameId
+        'currentGameId': gameId,
+        'myShips': ships,
+        'myCells': cells,
       }, () => this.loadData());                  
   }
 
@@ -130,9 +134,12 @@ class App extends React.Component {
         child.classList.remove('menu-selected');
       }
       parentEl.classList.add('menu-selected')
-    }
-    
+    }    
   }
+
+
+
+
 // *******************************ELEMENTS DECORATING*************************************
 // ********************************GAME ACTIONS******************************************
 
@@ -143,13 +150,13 @@ createGame () {
     player: this.state.loggedAs
   };
 
-  const textEl = document.querySelector('#text')
-  const textEl1 = document.querySelector('#text1')
-  const textEl2 = document.querySelector('#text2')
+  // const textEl = document.querySelector('#text')
+  // const textEl1 = document.querySelector('#text1')
+  // const textEl2 = document.querySelector('#text2')
   console.log('create!')
-  textEl.textContent = ''
-  textEl1.textContent = ''
-  textEl2.textContent = ''
+  // textEl.textContent = ''
+  // textEl1.textContent = ''
+  // textEl2.textContent = ''
   
   const myTeam = 'team1'
  
@@ -160,17 +167,14 @@ createGame () {
           
           const myShips = []
           const myCells = []
-          textEl.textContent = response.data.game.id + '\n'
-          textEl.textContent = response.data.game.name + '\n'
+          
 
           for (const ship of response.data.ships1) {
              myShips.push(ship)
           }
           for (const cell of response.data.cells1) {
             myCells.push(cell)
-         }
-
-          textEl1.textContent = myCells[0].id;
+         }          
           
           this.setState({
             'myShips': myShips,
@@ -178,8 +182,17 @@ createGame () {
             'currentGameId': response.data.game.id,
             'currentGameName': response.data.game.name
           })
+
+
           cookies.set('currentGameId', response.data.game.id)
           cookies.set('currentGameName', response.data.game.name)
+          cookies.set('myCells', myCells)
+          cookies.set('myShips', myShips)
+
+          // textEl.textContent = response.data.game.id + '\n'
+          // textEl.textContent = response.data.game.name + '\n'
+
+
         })
         .catch(error => console.log(error))
 
@@ -242,6 +255,7 @@ clearCell () {
 // *********************************RENDER*******************************************
   componentDidMount() {   
     this.getTokenStorage();
+    // this.addNumbers();
   }
 
   render() {
@@ -278,12 +292,13 @@ clearCell () {
                                               createGame={() => this.createGame()}
                                               gameName={this.state.currentGameName}/>}/>   
 
-              <Route path="field" element={<GameField createGame={() => this.createGame()}
+              <Route path="field" element={<GameField  createGame={() => this.createGame()}
                                         clearCell={() => this.clearCell()} 
                                         gameName={this.state.currentGameName} 
                                         setState={() => this.setState()} 
                                         myCells={this.state.myCells}
-                                        myShips={this.state.myShips}                                    
+                                        myShips={this.state.myShips}
+                                        addNumbers={(numbers) => this.addNumbers(numbers)}                                    
                                         hitCell={(id) => this.hitCell(id)}/>}/>
             </Route>           
             <Route path="*" element={<NotFound404/>}/>            
