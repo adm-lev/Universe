@@ -29,7 +29,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = Secret_Key
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG =  not True
+DEBUG =  True
 
 
 LOG_FILE = BASE_DIR / 'var' / 'log' / 'main_log.log'

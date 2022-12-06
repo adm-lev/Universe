@@ -31,7 +31,11 @@ ul, nav {
   background-color: rgb(228, 239, 182);
 }
 
-.cell-list {
+#ship-status {
+  font-size: larger;
+}
+
+.cell-list, .fr-cell-list, .en-cell-list {
   display: flex;
   justify-content:center;
   flex-wrap: wrap;
@@ -40,16 +44,31 @@ ul, nav {
   height: 280px;
   margin: 0;
   padding: 0%;
+ /* background-color: cadetblue; */
+  user-select: none; 
 }
 
 .cell-item {
   border: 1px solid black;
   flex-basis: 8%;
+  /* border-radius: 5px; */
   background-color: steelblue;
   text-align: center;
 }
 
-.ship-list {
+.green {
+  background-color: rgba(0, 128, 0, 0.719);
+}
+
+.yellow {
+  background-color: rgba(171, 171, 2, 0.763);
+}
+
+.red {
+  background-color: rgba(172, 3, 3, 0.731);
+}
+
+.ship-list, .fr-ship-list {
   display: flex;
   flex-wrap: wrap;
   text-align: center;

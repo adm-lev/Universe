@@ -10,7 +10,9 @@ import banners from './components/banners';
 import GreetingsBlock from './components/Greetings';
 import GamePreview from './components/GamePreview';
 import GameField from './components/GameField';
-import { helpText } from './components/functFile';
+import { helpText, selectedMenu } from './components/DOMmechanics';
+// import { createGame } from './components/gameActions';
+// import { logout, setToken } from './components/authentication';
 
 class App extends React.Component {
   constructor (props){
@@ -27,9 +29,10 @@ class App extends React.Component {
       'currentBoard': '',
       'myShips': '',
       'myCells': '',
+      'shipsReady': {},
       'shipsOk': false,
-      // 'baseUrl': 'http://localhost:8001/api',      
-      'baseUrl': 'https://devlev22.de:8043/api',
+      'baseUrl': 'http://localhost:8001/api',      
+      // 'baseUrl': 'https://devlev22.de:8043/api',
     };
   }
 
@@ -151,29 +154,7 @@ class App extends React.Component {
   
 // ******************************Authentication*************************************
 // *******************************ELEMENTS DECORATING*************************************
-  selectedMenu (event) {
-    
-    const element = event.target;
-    if (element.tagName === 'A') {
-      // console.log(element.parentNode);
-      const parentEl = element.parentNode;
-      const grabdPa = parentEl.parentNode; 
-      for (const child of grabdPa.children) {
-        child.classList.remove('menu-selected');
-      }
-      parentEl.classList.add('menu-selected')
-    }    
-  }
-
-  // helpText () {
-
-  //   const textEl = document.querySelector('#help');
-
-  //   textEl.innerHTML = 'Choose each ship below and select proper number of cells on the field'
-
-  // }
-
-
+ 
 // *******************************ELEMENTS DECORATING*************************************
 // ********************************GAME ACTIONS******************************************
 
@@ -184,13 +165,9 @@ createGame () {
     player: this.state.loggedAs
   };
 
-  // const textEl = document.querySelector('#text')
-  // const textEl1 = document.querySelector('#text1')
-  // const textEl2 = document.querySelector('#text2')
+  
   console.log('create!')
-  // textEl.textContent = ''
-  // textEl1.textContent = ''
-  // textEl2.textContent = ''
+  
   
   const myTeam = 'team1'
  
@@ -223,19 +200,7 @@ createGame () {
             
           })
 
-          // console.log(myCells)
-
-
-          // cookies.set('currentGameId', response.data.game.id)
-          // cookies.set('currentGameName', response.data.game.name)
-          // cookies.set('testcoc', myCells)
-          // cookies.set('myCells', this.state.myCells)
-          // cookies.set('myShips', myShips)
-
-          // textEl.textContent = response.data.game.id + '\n'
-          // textEl.textContent = response.data.game.name + '\n'
-
-
+          
         })
         .catch(error => console.log(error))
 
@@ -246,21 +211,10 @@ getCell () {
   // console.log('GET GET GET');
     const headers = this.getHeaders();
     const baseUrl = this.state.baseUrl;
-    // const textEl1 = document.querySelector('#text')
-    // const textEl1 = document.querySelector('#text')
+    
 
     axios.get(baseUrl+'/cells/', {headers}).then(response => {
-      // this.setState({
-      //   'notes': response.data,        
-      // });
-      // for (const i of response.data.results) {
-      //   testEl.textContent += i.id + ' '
-      //   testEl.textContent += i.xCoordinate + ' '
-      //   testEl.textContent += i.yCoordinate + ' '
-      //   testEl.textContent += i.board + ' '
-      //   testEl.textContent += i.haveShip + ' '
-      //   testEl.textContent += i.hitted + '\n'
-      // }      
+           
 
     }).catch(error => console.log(error));
 
@@ -305,7 +259,7 @@ clearCell () {
       <div>        
         <BrowserRouter>
         <div className="menu container">
-          <nav onClick={(event) => this.selectedMenu(event)} className='navigation'>
+          <nav onClick={(event) => selectedMenu(event)} className='navigation'>
             <li className="menu-selected menu-item">
               <Link to="/">Main</Link>
             </li>            
@@ -336,15 +290,8 @@ clearCell () {
                                               createGame={() => this.createGame()}
                                               gameName={this.state.currentGameName}/>}/>   
 
-              <Route path="field" element={<GameField  createGame={() => this.createGame()}
-                                        // clearCell={() => this.clearCell()} 
-                                        // gameName={this.state.currentGameName} 
-                                        // setState={() => this.setState()} 
-                                        // myCells={this.state.myCells}
-                                        // myShips={this.state.myShips}
-                                        helpText={()=>helpText()}
-                                        state={this.state}
-                                        // addNumbers={(numbers) => this.addNumbers(numbers)}                                    
+              <Route path="field" element={<GameField  createGame={() => this.createGame()}                                       
+                                        state={this.state}                                                                            
                                         hitCell={(id) => this.hitCell(id)}/>}/>
             </Route>           
             <Route path="*" element={<NotFound404/>}/>            
