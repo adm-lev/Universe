@@ -24,61 +24,150 @@ export function selectedMenu (event) {
   }
 
 
-  export function shipShuffle () {
-    const cellEls = document.querySelectorAll('.fr-tl')
-    // Math.floor(Math.random() * max);
+  export function shipShuffle (state) {
+    const cellEls = document.querySelectorAll('.fr-tl')   
     for (const cell_ of cellEls) {
       cell_.classList.add('green')
+      cell_.classList.remove('red')
+      cell_.classList.remove('yellow')
+    }   
+    for (const ship of state.myShips) {     
+      placeShip(cellEls, ship.maxHealth)
     }
-      // console.log(i++)
-    const stages = 4;
+  }
 
 
-
-
-
-    const horizontal = !Math.floor(Math.random() * 2);
+  function placeShip (cellEls, stages) { 
+    
+    while (true) {
+    const horizontal = !Math.floor(Math.random() * 2);   
     const startPosX = Math.floor(Math.random() * 10) + 1;
     const startPosY = Math.floor(Math.random() * 10) + 1;
-    const selectArray = [];
-    // for (const i = 0; i<stages; i++) {
-    const isValid = horizontal ? (startPosY + 3 <= 10) : (startPosX + 3 <= 10);  
+    const selectArray = validate(horizontal, startPosX, startPosY, cellEls, stages);
+    if (selectArray) {
+   
+      // pain cells before ship
+      let X = selectArray[0].dataset.x;
+      let Y = selectArray[0].dataset.y;
+      for (const el of cellEls) {
+        if (horizontal){
+        if (
+          (+el.dataset.x === +X-1 && +el.dataset.y === +Y-1) ||
+          (+el.dataset.x === +X && +el.dataset.y === +Y-1) ||
+          (+el.dataset.x === +X+1 && +el.dataset.y === +Y-1)
+        ) {
+          el.classList.add('yellow')
+        }
+      } else {
+        if (
+          (+el.dataset.x === +X-1 && +el.dataset.y === +Y-1) ||
+          (+el.dataset.x === +X-1 && +el.dataset.y === +Y) ||
+          (+el.dataset.x === +X-1 && +el.dataset.y === +Y+1)
+        ) {
+          el.classList.add('yellow')
+        }
+      }
+      }
+      // paint side cells
+      for (const el of selectArray) {
+        let x = el.dataset.x;
+        let y = el.dataset.y; 
+        for (const cell of cellEls) {
+          if (horizontal) {
+            if ((+cell.dataset.x === +x-1 && +cell.dataset.y === +y) ||
+                (+cell.dataset.x === +x+1 && +cell.dataset.y === +y)) {
+                  cell.classList.add('yellow')
+            }
+          } else {
+            if ((+cell.dataset.x === +x && +cell.dataset.y === +y-1) ||
+                (+cell.dataset.x === +x && +cell.dataset.y === +y+1)) {
+                  cell.classList.add('yellow')
+            }
+          }
+        }
+      }
+      //  paint cell after ship
+      X = selectArray[selectArray.length-1].dataset.x;
+      Y = selectArray[selectArray.length-1].dataset.y;
+      for (const el of cellEls) {
+        if (horizontal){
+        if (
+          (+el.dataset.x === +X+1 && +el.dataset.y === +Y+1) ||
+          (+el.dataset.x === +X && +el.dataset.y === +Y+1) ||
+          (+el.dataset.x === +X-1 && +el.dataset.y === +Y+1)
+        ) {
+          el.classList.add('yellow')
+        }
+      } else {
+        if (
+          (+el.dataset.x === +X+1 && +el.dataset.y === +Y+1) ||
+          (+el.dataset.x === +X+1 && +el.dataset.y === +Y) ||
+          (+el.dataset.x === +X+1 && +el.dataset.y === +Y-1)
+        ) {
+          el.classList.add('yellow')
+        }
+      }
+      }
+      for (const el of selectArray) {
+        el.classList.add('red')
+        el.classList.add('yellow')        
+      }
+      break;
+    } else {
+      continue;
+    }
+  }     
+  }
 
-      for (const el of cellEls){
-        if (+el.dataset.x === startPosX && +el.dataset.y === startPosY){
+  function validate (horizontal, startPosX, startPosY, cellEls, stages) {
+    const results = [];
+    let X = startPosX;
+    let Y = startPosY;
+    //  validate a position of the first cell
+    // let currentCell = null;  
+      for (const el of cellEls) {
+        if (+el.dataset.x === +X && +el.dataset.y === +Y ) {          
+          const positionOk = horizontal ? (Y + stages-1 <= 10) : (X + stages-1 <= 10);          
+          if (positionOk && !el.classList.contains('yellow')) {  
+            // currentCell = el;      
+            results.push(el);
+          } else {
+            return null;
+          }
+          break;
+        }
+      }
+      //  validate the rest of cells
+      for (let i=1; i<stages; i++) { 
+         if (horizontal){
+          Y += 1; 
+         } else {
+          X += 1;
+         }                      
+                
+        for (const el of cellEls) {
+          if (+el.dataset.x === +X && +el.dataset.y === +Y ) {
+            if (!el.classList.contains('yellow')) { 
+              // el.classList.add('yellow');
+              // console.log(el)
+              results.push(el);
+              break;
+            } else {
+              return null;
+            }
+          } 
 
-            
+        }
+      }
 
-            selectArray.push(el);  
-            el.classList.add('yellow')           
-            break;            
-        }       
-      } 
-    // }
-    console.log(selectArray)
-    console.log('horizo '+ horizontal)
-    console.log('isValid '+ isValid)
-    // console.log(startPos)
-    findOthers(selectArray[0], horizontal, cellEls)
-      
 
+    return results; 
   }
 
 
-  function findOthers (el, stage, horisontal, cellEls) {    
 
-    const nextEl = el;
 
-    nextEl = horisontal ? 
-      cellEls.querySelector(`[data-x="${nextEl.dataset.x}"][data-y="${nextEl.dataset.y+1}"]`) :
-      cellEls.querySelector(`[data-x="${nextEl.dataset.x+1}"][data-y="${nextEl.dataset.y}"]`);
-      
-      if (!nextEl.classList.contents('yellow')){
-        nextEl.classList.add('yellow')
-      } 
-      
 
-  }
 
 
   const abortController = new AbortController()
@@ -106,7 +195,7 @@ export function shipChoose (e, state) {
     
     //  lists of the current ships and cells
     const ships = state.myShips
-    const cells = state.myCells    
+    // const cells = state.myCells    
     //  chosen ship ID
     const ship = e.target.value
     const textEl = document.querySelector('#text');

@@ -1,6 +1,6 @@
 import { React, useEffect } from "react";
 // import { Link } from "react-router-dom";
-import { helpText, shipChoose, shipShuffle } from "./DOMmechanics";
+import { helpText, shipShuffle } from "./DOMmechanics";
 
 
 const letters = ['','A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
@@ -21,7 +21,7 @@ const GameField = ({ createGame, state}) => {
 
     const frCellElements = [];
     const enCellElements = [];
-    let shipElements = [];
+    // let shipElements = [];
     // const shipsReady = {};
     let cKeys = 0;  
     if (state.myCells){
@@ -47,14 +47,14 @@ const GameField = ({ createGame, state}) => {
         state.shipsReady[ship.id] = false;
     }
     
-    if (state.myShips) {
-        let keys = 0;
-        shipElements = state.myShips.map((ship_) => <option   data-type={ship_.shipType} 
-                                                    className="fr-ship ship" 
-                                                    key={keys++}
-                                                    value={ship_.id}
-                                                    >{ship_.shipType}</option>)      
-    }
+    // if (state.myShips) {
+    //     let keys = 0;
+    //     shipElements = state.myShips.map((ship_) => <option   data-type={ship_.shipType} 
+    //                                                 className="fr-ship ship" 
+    //                                                 key={keys++}
+    //                                                 value={ship_.id}
+    //                                                 >{ship_.shipType}</option>)      
+    // }
 
     return (
         <div className="game-field">
@@ -75,7 +75,7 @@ const GameField = ({ createGame, state}) => {
             </div>
             <div className="field-3">
                 <button  id='get' onClick={() => createGame()}>GAME</button><br/>
-                <button id="shuffle" onClick={()=>shipShuffle()}>SHUFFLE</button>
+                <button id="shuffle" onClick={()=>shipShuffle(state)}>SHUFFLE</button>
                 <button id='ok' >OK</button><br/>
                 
                 {true ? <label>{`Created game with name: ${state.currentGameName}`}</label> : null}<br/>

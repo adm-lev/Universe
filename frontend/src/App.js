@@ -31,8 +31,8 @@ class App extends React.Component {
       'myCells': '',
       'shipsReady': {},
       'shipsOk': false,
-      'baseUrl': 'http://localhost:8001/api',      
-      // 'baseUrl': 'https://devlev22.de:8043/api',
+      // 'baseUrl': 'http://localhost:8001/api',      
+      'baseUrl': 'https://devlev22.de:8043/api',
     };
   }
 
@@ -174,19 +174,16 @@ createGame () {
   const myBoard = []
 
   axios.post(`${this.state.baseUrl}/game/`, data, {headers})
-        .then(response => { 
-          
+        .then(response => {           
           const myShips = []
           const myCells = []
           
-
           for (const ship of response.data.ships1) {
              myShips.push(ship)
           }
           for (const cell of response.data.cells1) {
             myCells.push(cell)
-         }          
-          
+         }                    
           this.setState({
             'myShips': myShips,
             'myCells': myCells,
