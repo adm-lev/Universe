@@ -10,7 +10,7 @@ import banners from './components/banners';
 import GreetingsBlock from './components/Greetings';
 import GamePreview from './components/GamePreview';
 import GameField from './components/GameField';
-import { helpText, selectedMenu } from './components/DOMmechanics';
+import { selectedMenu } from './components/DOMmechanics';
 // import { createGame } from './components/gameActions';
 // import { logout, setToken } from './components/authentication';
 
@@ -139,7 +139,9 @@ class App extends React.Component {
               'myShips': response.data.ships,
               'myCells': response.data.cells
             })
-
+            // for (const cell of this.state.myCells) {
+            //   console.log(cell)
+            // }
 
       }).catch(error => console.log(error));
     }
@@ -189,7 +191,8 @@ createGame () {
             'myCells': myCells,
             'currentBoard': response.data.board.id,
             'currentGameId': response.data.game.id,
-            'currentGameName': response.data.game.name
+            'currentGameName': response.data.game.name,
+            'shipsReady' : {}
           }, () => {
             cookies.set('currentGameId', response.data.game.id)
             cookies.set('currentGameName', response.data.game.name)            
@@ -234,6 +237,36 @@ hitCell (id) {
   
 
 }
+
+
+saveBoardShips () {
+  
+  const headers = this.getHeaders();
+  const id = this.state.currentBoard;
+  const data = {}
+  let pool = {};
+
+  console.log(this.state.shipsReady)
+  for (const ship in this.state.shipsReady) {     
+      data[ship] = []
+      for (const cell of this.state.shipsReady[ship]) {      
+        let arr = [cell.dataset.x, cell.dataset.y]
+        data[ship].push(arr);
+      }
+    }
+ 
+  
+    console.log('SAVE BOARD SHIPS')
+  axios.put(`${this.state.baseUrl}/board/${id}/`, data, {headers})
+      .then(response => {         
+        this.loadData()
+        console.log('RESPONSE)))')        
+      })
+      .catch(error => console.log(error))
+
+
+}
+
 
 clearCell () {
   
@@ -289,7 +322,8 @@ clearCell () {
 
               <Route path="field" element={<GameField  createGame={() => this.createGame()}                                       
                                         state={this.state}                                                                            
-                                        hitCell={(id) => this.hitCell(id)}/>}/>
+                                        hitCell={(id) => this.hitCell(id)}
+                                        saveBoardShips={()=>this.saveBoardShips()}/>}/>
             </Route>           
             <Route path="*" element={<NotFound404/>}/>            
           </Routes>

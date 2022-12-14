@@ -1,17 +1,18 @@
 import { React, useEffect } from "react";
 // import { Link } from "react-router-dom";
-import { helpText, shipShuffle } from "./DOMmechanics";
+import { helpText, shipShuffle, bindShips, colorizeGame } from "./DOMmechanics";
 
 
 const letters = ['','A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 
 
-const GameField = ({ createGame, state}) => {
+const GameField = ({ createGame, state, saveBoardShips}) => {
     
     
 
     useEffect(()=>{
-        helpText()
+        helpText();
+        colorizeGame();
         // chosingMode(state)
     });
 
@@ -35,7 +36,8 @@ const GameField = ({ createGame, state}) => {
             
             }
             frCellElements.push(<li className="cell-item fr-tl" data-x={cell.xCoordinate} 
-                                                        data-y={cell.yCoordinate} 
+                                                        data-y={cell.yCoordinate}
+                                                        data-status={cell.cellState}
                                                         key={cKeys++}>{''}</li>); 
             enCellElements.push(<li className="cell-item en-tl" data-x={cell.xCoordinate} 
                                                         data-y={cell.yCoordinate} 
@@ -75,8 +77,9 @@ const GameField = ({ createGame, state}) => {
             </div>
             <div className="field-3">
                 <button  id='get' onClick={() => createGame()}>GAME</button><br/>
-                <button id="shuffle" onClick={()=>shipShuffle(state)}>SHUFFLE</button>
-                <button id='ok' >OK</button><br/>
+                <button id='ok' onClick={() => bindShips(state, saveBoardShips)} >OK</button><br/>
+                <button id="shuffle" onClick={()=>shipShuffle(state)}>SHUFFLE</button><br/>
+                
                 
                 {true ? <label>{`Created game with name: ${state.currentGameName}`}</label> : null}<br/>
                 <textarea id='text'></textarea><br/>          

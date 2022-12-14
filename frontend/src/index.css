@@ -44,16 +44,20 @@ ul, nav {
   height: 280px;
   margin: 0;
   padding: 0%;
- /* background-color: cadetblue; */
+ background-color: cadetblue;
   user-select: none; 
 }
 
 .cell-item {
   border: 1px solid black;
   flex-basis: 8%;
-  /* border-radius: 5px; */
+  border-radius: 3px;
   background-color: steelblue;
   text-align: center;
+}
+
+.en-tl:hover, .fr-tl:hover {
+  border-color: gold;
 }
 
 .green {

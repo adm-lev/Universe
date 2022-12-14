@@ -87,6 +87,8 @@ class Cell (models.Model):
     class Meta:
         verbose_name = 'Cell'
         verbose_name_plural = 'Cells'
+        ordering = ['id']
+
     def __str__(self) -> str:
         return f'{self.board}-{self.x_coordinate}:{self.y_coordinate}'
 
@@ -103,6 +105,8 @@ class Player (models.Model):
     class Meta:
         verbose_name = 'Player'
         verbose_name_plural = 'Players'
+
+
     def __str__(self) -> str:
         return f'{self.name}'
 

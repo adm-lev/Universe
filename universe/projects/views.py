@@ -128,8 +128,35 @@ class BoardCustomViewSet(GenericViewSet, mixins.ListModelMixin):
     # def create():
     #     pass
 
-    # def update():
-    #     pass
+    def update(self, request, pk):
+        # current_board = get_object_or_404(Board, pk=pk)
+
+        cells = Cell.objects.filter(board=pk)
+        # print(cells)
+
+        # cur_cell = cells.get(x_coordinate=2, y_coordinate=10)
+        # print(cur_cell.cell_state)
+        # print(cur_cell.have_ship)
+        for i in request.data:
+            # print(i)
+            cur_ship = Ship.objects.get(id=i)
+            print(cur_ship)
+            for j in request.data[i]:
+                cur_cell = cells.get(x_coordinate=j[0], y_coordinate=j[1])
+                cur_cell.cell_state = 1
+                cur_cell.have_ship = True
+                cur_cell.ship_id = cur_ship
+                cur_cell.save()
+                print(cur_cell)
+            # print('---')
+            
+            
+
+        return Response({})
+
+
+
+
 
 
 class GameCustomViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):

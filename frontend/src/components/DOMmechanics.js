@@ -24,6 +24,16 @@ export function selectedMenu (event) {
   }
 
 
+  export function colorizeGame () {
+    const cellEls = document.querySelectorAll('.fr-tl')
+    for (const cell_ of cellEls) {
+      if (+cell_.dataset.status === 1) {
+        cell_.classList.add('yellow')
+      }
+    }
+  }
+
+
   export function shipShuffle (state) {
     const cellEls = document.querySelectorAll('.fr-tl')   
     for (const cell_ of cellEls) {
@@ -32,18 +42,21 @@ export function selectedMenu (event) {
       cell_.classList.remove('yellow')
     }   
     for (const ship of state.myShips) {     
-      placeShip(cellEls, ship.maxHealth)
+      state.shipsReady[ship.id] = placeShip(cellEls, ship.maxHealth);
     }
+    
   }
 
 
   function placeShip (cellEls, stages) { 
     
+    let selectArray = []
+
     while (true) {
     const horizontal = !Math.floor(Math.random() * 2);   
     const startPosX = Math.floor(Math.random() * 10) + 1;
     const startPosY = Math.floor(Math.random() * 10) + 1;
-    const selectArray = validate(horizontal, startPosX, startPosY, cellEls, stages);
+    selectArray = validate(horizontal, startPosX, startPosY, cellEls, stages);
     if (selectArray) {
    
       // pain cells before ship
@@ -117,6 +130,8 @@ export function selectedMenu (event) {
       continue;
     }
   }     
+
+  return selectArray;
   }
 
   function validate (horizontal, startPosX, startPosY, cellEls, stages) {
@@ -124,12 +139,10 @@ export function selectedMenu (event) {
     let X = startPosX;
     let Y = startPosY;
     //  validate a position of the first cell
-    // let currentCell = null;  
       for (const el of cellEls) {
         if (+el.dataset.x === +X && +el.dataset.y === +Y ) {          
           const positionOk = horizontal ? (Y + stages-1 <= 10) : (X + stages-1 <= 10);          
-          if (positionOk && !el.classList.contains('yellow')) {  
-            // currentCell = el;      
+          if (positionOk && !el.classList.contains('yellow')) { 
             results.push(el);
           } else {
             return null;
@@ -147,9 +160,7 @@ export function selectedMenu (event) {
                 
         for (const el of cellEls) {
           if (+el.dataset.x === +X && +el.dataset.y === +Y ) {
-            if (!el.classList.contains('yellow')) { 
-              // el.classList.add('yellow');
-              // console.log(el)
+            if (!el.classList.contains('yellow')) {               
               results.push(el);
               break;
             } else {
@@ -167,62 +178,107 @@ export function selectedMenu (event) {
 
 
 
-
-
-
-  const abortController = new AbortController()
-
-  const paintCells = (event, shipHealth, state, ship) => {
-    const cell = event.target;
-    const statusEl = document.querySelector('#ship-status')
-    console.log(ship)
-    if (cell.classList.contains('green')) {
-      event.target.classList.remove('green');
-      event.target.classList.add('yellow');
-      shipHealth -= 1;
-
-      statusEl.textContent = shipHealth
-      
+  export function bindShips (state, saveBoardShips) {
+    console.log('yeahh!')
+    const cellEls = document.querySelectorAll('.fr-tl')   
+    for (const cell_ of cellEls) {
+      cell_.classList.remove('green')
+      cell_.classList.remove('red')
+      cell_.classList.remove('yellow')
     }
-    // abortController.abort() 
+    const data = {}
+    console.log(state.currentBoard)
+    
+    saveBoardShips();
+    
   }
 
 
-export function shipChoose (e, state) {
 
-    // const [myCells, setCells] = useState(0);
-    // const [myShips, setShips] = useState(0);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//   const abortController = new AbortController()
+
+//   const paintCells = (event, shipHealth, state, ship) => {
+//     const cell = event.target;
+//     const statusEl = document.querySelector('#ship-status')
+//     console.log(ship)
+//     if (cell.classList.contains('green')) {
+//       event.target.classList.remove('green');
+//       event.target.classList.add('yellow');
+//       shipHealth -= 1;
+
+//       statusEl.textContent = shipHealth
+      
+//     }
+//     // abortController.abort() 
+//   }
+
+
+// export function shipChoose (e, state) {
+
+//     // const [myCells, setCells] = useState(0);
+//     // const [myShips, setShips] = useState(0);
     
-    //  lists of the current ships and cells
-    const ships = state.myShips
-    // const cells = state.myCells    
-    //  chosen ship ID
-    const ship = e.target.value
-    const textEl = document.querySelector('#text');
-    const statusEl = document.querySelector('#ship-status')
-    const cellEls = document.querySelectorAll('.fr-tl')
-    // cellEls[0].parentNode.removeEventListener('click',paintCells)
-    // console.log(cellEls)
-    // a variable for the cells count
-    let shipHealth = 0
+//     //  lists of the current ships and cells
+//     const ships = state.myShips
+//     // const cells = state.myCells    
+//     //  chosen ship ID
+//     const ship = e.target.value
+//     const textEl = document.querySelector('#text');
+//     const statusEl = document.querySelector('#ship-status')
+//     const cellEls = document.querySelectorAll('.fr-tl')
+//     // cellEls[0].parentNode.removeEventListener('click',paintCells)
+//     // console.log(cellEls)
+//     // a variable for the cells count
+//     let shipHealth = 0
    
-    textEl.textContent = ship + '\n'
-    // show is ship ready?
-    // console.log(shipsReady[ship])
-    //   mark cells free to ship allocation
-    for (const cell_ of cellEls) {
-      cell_.classList.add('green')
-    }
+//     textEl.textContent = ship + '\n'
+//     // show is ship ready?
+//     // console.log(shipsReady[ship])
+//     //   mark cells free to ship allocation
+//     for (const cell_ of cellEls) {
+//       cell_.classList.add('green')
+//     }
 
-    for (const ship_ of ships) {      
-      if (ship_.id ===  parseInt(ship)) {
-        statusEl.textContent = `${ship_.shipType}: `;
-         // cells = health  
-        shipHealth = ship_.health
-        statusEl.textContent += shipHealth+' cells left';                  
-      }
-    }
-    console.log('ok')
-   cellEls[0].parentNode.addEventListener('click',(ev) => paintCells(ev, shipHealth, state, ship),{signal: abortController.signal})
+//     for (const ship_ of ships) {      
+//       if (ship_.id ===  parseInt(ship)) {
+//         statusEl.textContent = `${ship_.shipType}: `;
+//          // cells = health  
+//         shipHealth = ship_.health
+//         statusEl.textContent += shipHealth+' cells left';                  
+//       }
+//     }
+//     console.log('ok')
+//    cellEls[0].parentNode.addEventListener('click',(ev) => paintCells(ev, shipHealth, state, ship),{signal: abortController.signal})
 
-}
+// }
